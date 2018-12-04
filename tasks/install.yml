@@ -92,11 +92,19 @@
       apiVersion: apps/v1
       kind: Deployment
       metadata:
-        namespace: "{{ cluster_prometheus_namespace }}"
+        labels:
+          k8s-app: '{{ cluster_prometheus_namespace }}-operator'
         name: '{{ cluster_prometheus_namespace }}-operator'
+        namespace: "{{ cluster_prometheus_namespace }}"
       spec:
-        replicas: "{{ cluster_prometheus_operator_size }}"
+        replicas: "{{ custom_prometheus_operator_size }}"
+        selector:
+          matchLabels:
+            k8s-app: '{{ cluster_prometheus_namespace }}-operator'
         template:
+          metadata:
+            labels:
+              k8s-app: '{{ cluster_prometheus_namespace }}-operator'
           spec:
             containers:
             - args:
