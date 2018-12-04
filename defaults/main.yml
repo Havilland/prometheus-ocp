@@ -4,4 +4,4 @@ cluster_prometheus_namespace: app-prometheus
 cluster_prometheus_apiGroup: monitoring.example.com
 cluster_prometheus_operator_size: 1
 cluster_prometheus_operator_version: v0.25.0
-cluster_prometheus_serviceAccount: cluster_prometheus
+cluster_prometheus_serviceAccount: app-prometheus
