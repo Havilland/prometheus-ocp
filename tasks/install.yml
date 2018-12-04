@@ -1,0 +1,124 @@
+- name: create Namespace if not present
+  k8s:
+    state: present
+    name: '{{ cluster_prometheus_namespace }}'
+    api_version: v1
+    kind: Namespace
+
+- name: create clusterrole for prometheus operator
+  k8s:
+    state: present
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRole
+      metadata:
+        name: '{{ cluster_prometheus_namespace }}'
+      rules:
+      - apiGroups:
+        - apiextensions.k8s.io
+        resources:
+        - customresourcedefinitions
+        verbs:
+        - '*'
+      - apiGroups:
+        - '{{ cluster_prometheus_apiGroup }}'
+        resources:
+        - alertmanagers
+        - prometheuses
+        - prometheuses/finalizers
+        - alertmanagers/finalizers
+        - servicemonitors
+        - prometheusrules
+        verbs:
+        - '*'
+      - apiGroups:
+        - apps
+        resources:
+        - statefulsets
+        verbs:
+        - '*'
+      - apiGroups:
+        - ""
+        resources:
+        - configmaps
+        - secrets
+        verbs:
+        - '*'
+      - apiGroups:
+        - ""
+        resources:
+        - pods
+        verbs:
+        - list
+        - delete
+      - apiGroups:
+        - ""
+        resources:
+        - services
+        - endpoints
+        verbs:
+        - get
+        - create
+        - update
+      - apiGroups:
+        - ""
+        resources:
+        - nodes
+        verbs:
+        - list
+        - watch
+      - apiGroups:
+        - ""
+        resources:
+        - namespaces
+        verbs:
+        - get
+        - list
+        - watch
+
+- name: create service account for custom-prometheus-operator
+  k8s:
+    state: present
+    name: '{{ cluster_prometheus_serviceAccount }}'
+    api_version: v1
+    kind: ServiceAccount
+    namespace: '{{ cluster_prometheus_namespace }}'
+
+- name: deploy prometheus operator
+  k8s:
+    state: present
+    namespace: "{{ cluster_prometheus_namespace }}"
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        namespace: "{{ cluster_prometheus_namespace }}"
+      spec:
+        replicas: "{{ cluster_prometheus_operator_size }}"
+        template:
+          spec:
+            containers:
+            - args:
+              - --kubelet-service=kube-system/kubelet
+              - --logtostderr=true
+              - --config-reloader-image=quay.io/coreos/configmap-reload:v0.0.1
+              - --prometheus-config-reloader=quay.io/coreos/prometheus-config-reloader:'{{ cluster_prometheus_operator_version }}'
+              - --crd-apigroup='{{ cluster_prometheus_operator_version }}'
+              image: quay.io/coreos/prometheus-operator:'{{ cluster_prometheus_operator_version }}'
+              name: '{{ cluster_prometheus_namespace }}-operator'
+              ports:
+              - containerPort: 8080
+                name: http
+              resources:
+                limits:
+                  cpu: 200m
+                  memory: 200Mi
+                requests:
+                  cpu: 100m
+                  memory: 100Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+            securityContext:
+              runAsNonRoot: true
+            serviceAccountName: "{{ cluster_prometheus_serviceAccount }}"
