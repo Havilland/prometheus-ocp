@@ -97,7 +97,7 @@
         name: '{{ cluster_prometheus_namespace }}-operator'
         namespace: "{{ cluster_prometheus_namespace }}"
       spec:
-        replicas: "{{ custom_prometheus_operator_size }}"
+        replicas: "{{ cluster_prometheus_operator_size }}"
         selector:
           matchLabels:
             k8s-app: '{{ cluster_prometheus_namespace }}-operator'
