@@ -93,6 +93,7 @@
       kind: Deployment
       metadata:
         namespace: "{{ cluster_prometheus_namespace }}"
+        name: '{{ cluster_prometheus_namespace }}-operator'
       spec:
         replicas: "{{ cluster_prometheus_operator_size }}"
         template:
