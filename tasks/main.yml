@@ -1,2 +1,88 @@
 ---
 # tasks file for prometheus-ocp
+
+- name: create Namespace if not present
+  k8s:
+    state: present
+    name: '{{ cluster_prometheus_namespace }}'
+    api_version: v1
+    kind: Namespace
+
+- name: create clusterrole for prometheus operator
+  k8s:
+    state: present
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRole
+      metadata:
+        name: '{{ cluster_prometheus_namespace }}'
+      rules:
+      - apiGroups:
+        - apiextensions.k8s.io
+        resources:
+        - customresourcedefinitions
+        verbs:
+        - '*'
+      - apiGroups:
+        - '{{ cluster_prometheus_apiGroup }}'
+        resources:
+        - alertmanagers
+        - prometheuses
+        - prometheuses/finalizers
+        - alertmanagers/finalizers
+        - servicemonitors
+        - prometheusrules
+        verbs:
+        - '*'
+      - apiGroups:
+        - apps
+        resources:
+        - statefulsets
+        verbs:
+        - '*'
+      - apiGroups:
+        - ""
+        resources:
+        - configmaps
+        - secrets
+        verbs:
+        - '*'
+      - apiGroups:
+        - ""
+        resources:
+        - pods
+        verbs:
+        - list
+        - delete
+      - apiGroups:
+        - ""
+        resources:
+        - services
+        - endpoints
+        verbs:
+        - get
+        - create
+        - update
+      - apiGroups:
+        - ""
+        resources:
+        - nodes
+        verbs:
+        - list
+        - watch
+      - apiGroups:
+        - ""
+        resources:
+        - namespaces
+        verbs:
+        - get
+        - list
+        - watch
+
+- name: create service account for custom-prometheus-operator
+  k8s:
+    state: present
+    name: '{{ cluster_prometheus_serviceAccount }}'
+    api_version: v1
+    kind: ServiceAccount
+    namespace: '{{ cluster_prometheus_namespace }}'
