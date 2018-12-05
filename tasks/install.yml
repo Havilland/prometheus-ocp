@@ -84,6 +84,24 @@
     kind: ServiceAccount
     namespace: '{{ cluster_prometheus_namespace }}'
 
+- name: create clusterrolebinding
+  k8s:
+    state: present
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      metadata:
+        name: "{{ cluster_prometheus_namespace }}"
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: "{{ cluster_prometheus_namespace }}"
+      subjects:
+      - kind: ServiceAccount
+        name: "{{ cluster_prometheus_serviceAccount }}"
+        namespace: "{{ cluster_prometheus_namespace }}"
+
+
 - name: deploy prometheus operator
   k8s:
     state: present
