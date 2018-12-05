@@ -1,5 +1,7 @@
 ---
 # tasks file for prometheus-ocp
 
+# use k8s_facts to check if namespace is there > if not then start install
+
 - include_tasks: install.yml
 
