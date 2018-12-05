@@ -3,5 +3,16 @@
 
 # use k8s_facts to check if namespace is there > if not then start install
 
+- name: Check if {{ cluster_prometheus_namespace }} exists
+  k8s_facts:
+    kind: namespace
+    namespace: {{ cluster_prometheus_namespace }}
+  register: operator_namespace
+
+- debug:
+    var: operator_namespace
+
 - include_tasks: install.yml
 
+
+- include_tasks: grafana.yml
