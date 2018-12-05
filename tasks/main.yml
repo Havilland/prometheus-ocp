@@ -5,6 +5,7 @@
 
 - name: Check if cluster_prometheus_namespace exists
   k8s_facts:
+    verify_ssl: "{{ verify_ssl | lookup('env','K8S_AUTH_VERIFY_SSL')}}"
     api_version: v1
     kind: namespace
     namespace: '{{ cluster_prometheus_namespace }}'
