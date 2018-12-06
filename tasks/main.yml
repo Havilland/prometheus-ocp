@@ -5,16 +5,18 @@
 
 - name: Check if cluster_prometheus_namespace exists
   k8s_facts:
-    verify_ssl: "{{ verify_ssl | lookup('env','K8S_AUTH_VERIFY_SSL')}}"
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     api_version: v1
-    kind: namespace
-    namespace: '{{ cluster_prometheus_namespace }}'
+    kind: Namespace
+#    namespace: '{{ cluster_prometheus_namespace }}'
+    field_selectors:
+      - metadata.namespace = {{ cluster_prometheus_namespace }}
   register: operator_namespace
 
 - debug:
     var: operator_namespace
 
 - include_tasks: install.yml
-
+  when: operator_namespace.resources.status.phase != "Active"
 
 #- include_tasks: grafana.yml
