@@ -1,3 +1,9 @@
 ---
 
-- name: deploy 
+- name: deploy service account
+
+- name: create clusterrolebinding
+
+- name: deploy prometheus cr to namespace
+
+- name: deploy grafana
