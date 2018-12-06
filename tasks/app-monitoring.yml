@@ -35,6 +35,7 @@
       kind: Prometheus
       metadata:
         name: '{{ cluster_prometheus_namespace_serviceAccount }}'
+        namespace: '{{ item.metadata.name }}'
       labels:
         app-prometheus: prometheus
       spec:
@@ -43,7 +44,6 @@
         serviceMonitorSelector:
           matchLabels:
             team: frontend
-        namespace: '{{ item.metadata.name }}'
 
     
 #- name: deploy pushgateway
