@@ -31,7 +31,7 @@
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     definition:
-      apiVersion: "{{ cluster_prometheus_apiGroup }}"/v1
+      apiVersion: '{{ cluster_prometheus_apiGroup }}/v1'
       kind: Prometheus
       metadata:
         name: '{{ cluster_prometheus_namespace_serviceAccount }}'
