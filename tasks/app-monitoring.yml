@@ -43,6 +43,7 @@
         serviceMonitorSelector:
           matchLabels:
             team: frontend
+        namespace: '{{ item.metadata.name }}'
 
     
 #- name: deploy pushgateway
