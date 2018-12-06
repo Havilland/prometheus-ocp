@@ -154,3 +154,27 @@
             securityContext:
               runAsNonRoot: true
             serviceAccountName: "{{ cluster_prometheus_serviceAccount }}"
+
+- name: Create app-prometheus clusterrole
+  k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    state: present
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1beta1
+      kind: ClusterRole
+      metadata:
+        name: prometheus
+      rules:
+      - apiGroups: [""]
+        resources:
+        - nodes
+        - services
+        - endpoints
+        - pods
+        verbs: ["get", "list", "watch"]
+      - apiGroups: [""]
+        resources:
+        - configmaps
+        verbs: ["get"]
+      - nonResourceURLs: ["/metrics"]
+        verbs: ["get"]
