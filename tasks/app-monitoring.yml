@@ -5,18 +5,46 @@
 - name: deploy service account
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
-    api_version:
+    api_version: v1
+    name: '{{ cluster_prometheus_namespace_serviceAccount }}'
+    kind: ServiceAccount
+    namespace: '{{ item.metadata.name }}'
+        
+- name: create clusterrolebinding
+  k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1beta1
+      kind: ClusterRoleBinding
+      metadata:
+        name: '{{ cluster_prometheus_namespace_serviceAccount }}'
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: '{{ cluster_prometheus_namespace_serviceAccount }}'
+      subjects:
+      - kind: ServiceAccount
+        name: '{{ cluster_prometheus_namespace_serviceAccount }}'
+        namespace: '{{ item.metadata.name }}'
+
+- name: deploy prometheus cr to namespace
+  k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    definition:
+      apiVersion: "{{ cluster_prometheus_apiGroup }}"/v1
+      kind: Prometheus
+      metadata:
+        name: '{{ cluster_prometheus_namespace_serviceAccount }}'
+      labels:
+        app-prometheus: prometheus
+      spec:
+        replicas: 2
+        serviceAccountName: '{{ cluster_prometheus_namespace_serviceAccount }}'
+        serviceMonitorSelector:
+          matchLabels:
+            team: frontend
+
     
-#- name: create clusterrolebinding
-#  k8s:
-#    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
-#    api_version:
-#
-#- name: deploy prometheus cr to namespace
-#  k8s:
-#    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
-#    api_version:
-#    
 #- name: deploy pushgateway
 #  k8s:
 #    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
