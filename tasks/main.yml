@@ -3,16 +3,16 @@
 
 # use k8s_facts to check if namespace is there > if not then start install
 
-- name: Check if cluster_prometheus_namespace exists
+- name: Check if cluster_prometheus is deployed
   k8s_facts:
     verify_ssl: "{{ verify_ssl | lookup('env','K8S_AUTH_VERIFY_SSL')}}"
     api_version: v1
-    kind: namespace
-    namespace: '{{ cluster_prometheus_namespace }}'
-  register: operator_namespace
+    kind: Deployment
+    namespace: '{{ cluster_prometheus_label }}'
+  register: prometheus_operator
 
 - debug:
-    var: operator_namespace
+    var: prometheus_operator
 
 - include_tasks: install.yml
 
