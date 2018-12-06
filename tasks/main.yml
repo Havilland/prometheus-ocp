@@ -31,4 +31,11 @@
 - debug:
     var: namespaces_prom
 
-- include_tasks: app-monitoring.yml
+- debug:
+    msg: "item: {{ item }}"
+  with_items:
+    - namespaces_prom.resources
+
+#- include_tasks: app-monitoring.yml
+#  with_items:
+#    - namespaces_prom.resources
