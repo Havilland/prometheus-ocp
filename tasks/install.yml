@@ -1,5 +1,6 @@
 - name: create Namespace if not present
   k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present
     name: '{{ cluster_prometheus_namespace }}'
     api_version: v1
@@ -7,6 +8,7 @@
 
 - name: create clusterrole for prometheus operator
   k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present
     definition:
       apiVersion: rbac.authorization.k8s.io/v1
@@ -78,6 +80,7 @@
 
 - name: create service account for custom-prometheus-operator
   k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present
     name: '{{ cluster_prometheus_serviceAccount }}'
     api_version: v1
@@ -86,6 +89,7 @@
 
 - name: create clusterrolebinding
   k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present
     definition:
       apiVersion: rbac.authorization.k8s.io/v1
@@ -104,6 +108,7 @@
 
 - name: deploy prometheus operator
   k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present
     namespace: "{{ cluster_prometheus_namespace }}"
     definition:

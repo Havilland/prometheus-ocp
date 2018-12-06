@@ -5,16 +5,24 @@
 
 - name: Check if cluster_prometheus is deployed
   k8s_facts:
-    verify_ssl: "{{ verify_ssl | lookup('env','K8S_AUTH_VERIFY_SSL')}}"
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     api_version: v1
+<<<<<<< HEAD
     kind: Deployment
     namespace: '{{ cluster_prometheus_label }}'
   register: prometheus_operator
+=======
+    kind: Namespace
+#    namespace: '{{ cluster_prometheus_namespace }}'
+    field_selectors:
+      - metadata.namespace = {{ cluster_prometheus_namespace }}
+  register: operator_namespace
+>>>>>>> 32b7ccd3bfbc853a31b9c3a8a408aad2057269f4
 
 - debug:
     var: prometheus_operator
 
 - include_tasks: install.yml
-
+  when: operator_namespace.resources.status.phase != "Active"
 
 #- include_tasks: grafana.yml
