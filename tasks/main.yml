@@ -32,10 +32,8 @@
     var: namespaces_prom
 
 - debug:
-    msg: "item: {{ item }}"
-  with_items:
-    - namespaces_prom.resources
+    msg: "item: {{ item.metadata.name }}"
+  loop: "{{ namespaces_prom.resources | flatten(levels=1) }}"
 
-#- include_tasks: app-monitoring.yml
-#  with_items:
-#    - namespaces_prom.resources
+- include_tasks: app-monitoring.yml
+  loop: "{{ namespaces_prom.resources|flatten(levels=1) }}"
