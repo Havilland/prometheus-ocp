@@ -18,7 +18,7 @@
       metadata:
         name: '{{ cluster_prometheus_grafana_serviceAccount }}'
         labels:
-          app-monitor '{{ custom_prometheus_custom_label }}'
+          app-monitor: '{{ cluster_prometheus_custom_label }}'
       roleRef:
         apiGroup: rbac.authorization.k8s.io
         kind: ClusterRole
