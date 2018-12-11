@@ -3,9 +3,14 @@
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present
-    name: '{{ cluster_prometheus_grafana_serviceAccount }}'
-    kind: ServiceAccount
-    namespace: '{{ item.metadata.name }}'
+    definiton:
+      apiVersion: v1
+      name: '{{ cluster_prometheus_grafana_serviceAccount }}'
+      kind: ServiceAccount
+      namespace: '{{ item.metadata.name }}'
+      metadata:
+        labels:
+          - '{{ custom_prometheus_custom_label }}'
 
 - name: set clusterrolebinding for grafana service account
   k8s:
@@ -16,6 +21,8 @@
       kind: ClusterRoleBinding
       metadata:
         name: '{{ cluster_prometheus_grafana_serviceAccount }}'
+        labels:
+          - '{{ custom_prometheus_custom_label }}'
       roleRef:
         apiGroup: rbac.authorization.k8s.io
         kind: ClusterRole
@@ -40,7 +47,8 @@
       metadata:
         name: "{{ cluster_prometheus_grafana_serviceAccount }}-pvc"
         labels:
-          app: '{{ cluster_prometheus_grafana_serviceAccount }}'
+          - app: '{{ cluster_prometheus_grafana_serviceAccount }}'
+          - '{{ custom_prometheus_custom_label }}'
         namespace: '{{ item.metadata.name }}'
       spec:
         accessModes:
