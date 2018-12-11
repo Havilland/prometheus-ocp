@@ -43,8 +43,8 @@
       metadata:
         name: "{{ cluster_prometheus_grafana_serviceAccount }}-pvc"
         labels:
-          - app: '{{ cluster_prometheus_grafana_serviceAccount }}'
-          - app-monitor: '{{ cluster_prometheus_custom_label }}'
+          app: '{{ cluster_prometheus_grafana_serviceAccount }}'
+          app-monitor: '{{ cluster_prometheus_custom_label }}'
         namespace: '{{ item.metadata.name }}'
       spec:
         accessModes:
