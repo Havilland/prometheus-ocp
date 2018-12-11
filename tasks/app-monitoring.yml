@@ -10,8 +10,6 @@
     kind: ServiceAccount
     name: '{{ cluster_prometheus_namespace_serviceAccount }}'
     definition:
-      apiVersion: v1
-      kind: ServiceAccount
       metadata:
         name: '{{ cluster_prometheus_namespace_serviceAccount }}'
         namespace: '{{ item.metadata.name }}'
