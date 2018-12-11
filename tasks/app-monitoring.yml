@@ -22,7 +22,7 @@
       apiVersion: rbac.authorization.k8s.io/v1beta1
       kind: ClusterRoleBinding
       metadata:
-        - name: '{{ cluster_prometheus_namespace_serviceAccount }}'
+        name: '{{ cluster_prometheus_namespace_serviceAccount }}'
         labels:
           - '{{ cluster_prometheus_custom_label }}'
       roleRef:
