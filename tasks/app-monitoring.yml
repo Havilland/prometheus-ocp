@@ -6,11 +6,11 @@
 - name: deploy service account
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
-    api_version: v1
-    kind: ServiceAccount
-    name: '{{ cluster_prometheus_namespace_serviceAccount }}'
-    namespace: '{{ item.metadata.name }}'
     definition:
+      api_version: v1
+      kind: ServiceAccount
+      name: '{{ cluster_prometheus_namespace_serviceAccount }}'
+      namespace: '{{ item.metadata.name }}'
       metadata:
         labels:
           - '{{ cluster_prometheus_custom_label }}'
