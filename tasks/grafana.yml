@@ -1,5 +1,5 @@
 ---
-- name: create grafana service account
+- name: "Grafana Deployment: create grafana service account"
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present
@@ -8,7 +8,7 @@
     kind: ServiceAccount
     namespace: '{{ item.metadata.name }}'
 
-- name: set clusterrolebinding for grafana service account
+- name: "Grafana Deployment: set clusterrolebinding for grafana service account"
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present
@@ -33,7 +33,7 @@
 #    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
 #    state: present
 
-- name: create grafana pvc
+- name: "Grafana Deployment: create grafana pvc"
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present

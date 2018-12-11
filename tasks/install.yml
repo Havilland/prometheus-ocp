@@ -1,4 +1,4 @@
-- name: create Namespace if not present
+- name: "Base Installation: create Namespace if not present"
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present
@@ -6,7 +6,7 @@
     api_version: v1
     kind: Namespace
 
-- name: create clusterrole for prometheus operator
+- name: "Base Installation: create clusterrole for prometheus operator"
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present
@@ -78,7 +78,7 @@
         - list
         - watch
 
-- name: create service account for custom-prometheus-operator
+- name: "Base Installation: create service account for custom-prometheus-operator"
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present
@@ -106,7 +106,7 @@
         namespace: "{{ cluster_prometheus_namespace }}"
 
 
-- name: deploy prometheus operator
+- name: "Base Installation: deploy prometheus operator"
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present
@@ -156,7 +156,7 @@
               runAsNonRoot: true
             serviceAccountName: "{{ cluster_prometheus_operator_serviceAccount }}"
 
-- name: Create app-prometheus clusterrole
+- name: "Base Installation: Create app-prometheus clusterrole"
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present
@@ -180,7 +180,7 @@
       - nonResourceURLs: ["/metrics"]
         verbs: ["get"]
 
-- name: Create clusterrole for grafana
+- name: "Base Installation: Create clusterrole for grafana"
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present

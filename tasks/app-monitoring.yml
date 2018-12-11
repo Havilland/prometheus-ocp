@@ -3,7 +3,7 @@
   debug:
     msg: "Variable: {{ item.metadata.name }}"
 
-- name: deploy service account
+- name: "Prometheus Deployment: deploy service account"
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present
@@ -12,7 +12,7 @@
     name: '{{ cluster_prometheus_namespace_serviceAccount }}'
     namespace: '{{ item.metadata.name }}'
         
-- name: create clusterrolebinding
+- name: "Prometheus Deployment: create clusterrolebinding"
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     definition:
@@ -31,7 +31,7 @@
         name: '{{ cluster_prometheus_namespace_serviceAccount }}'
         namespace: '{{ item.metadata.name }}'
 
-- name: deploy prometheus cr to namespace
+- name: "Prometheus Deployment: Deploy prometheus custom resource to namespace"
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     definition:
