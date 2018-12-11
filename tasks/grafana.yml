@@ -1,1 +1,63 @@
 ---
+- name: create grafana service account
+  k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    state: present
+    name: '{{ cluster_prometheus_grafana_serviceAccount }}'
+    kind: ServiceAccount
+    namespace: '{{ item.metadata.name }}'
+
+- name: set clusterrolebinding for grafana service account
+  k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    state: present
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1beta1
+      kind: ClusterRoleBinding
+      metadata:
+        name: '{{ cluster_prometheus_grafana_serviceAccount }}'
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: '{{ cluster_prometheus_grafana_serviceAccount }}'
+      subjects:
+        - kind: ServiceAccount
+          name: '{{ cluster_prometheus_grafana_serviceAccount }}'
+          namespace: '{{ item.metadata.name }}'
+
+#- name: create service/route for grafana
+#  k8s:
+#    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+#    state: present
+
+- name: create grafana pvc
+  k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: '{{ cluster_prometheus_grafana_serviceAccount }}'-pvc
+        labels:
+          app: '{{ cluster_prometheus_grafana_serviceAccount }}'
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+
+#- name: create grafana deployment
+#  k8s:
+#    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+#    state: present
+
+#- name: get prometheus service
+#  k8s:
+#    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+#    state: present
+
+#- name: create grafana datasource (uri call to grafana api)
+
+#- name: create example dashboard

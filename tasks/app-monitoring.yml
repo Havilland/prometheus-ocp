@@ -1,5 +1,6 @@
 ---
-- debug:
+- name: print debug var of namespace
+  debug:
     msg: "Variable: {{ item.metadata.name }}"
 
 - name: deploy service account
@@ -45,7 +46,7 @@
           matchLabels:
             team: frontend
 
-    
+
 #- name: deploy pushgateway
 #  k8s:
 #    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
@@ -55,9 +56,5 @@
 #  k8s:
 #    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
 #    api_version:
-#    
-#- name: deploy grafana
-#  k8s:
-#    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
-#    api_version:
+
     

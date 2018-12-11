@@ -179,3 +179,29 @@
         verbs: ["get"]
       - nonResourceURLs: ["/metrics"]
         verbs: ["get"]
+
+- name: Create clusterrole for grafana
+  k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    state: present
+    definition:
+      apiVersion: authorization.openshift.io/v1
+      kind: ClusterRole
+      metadata:
+        creationTimestamp: null
+        name: grafana
+      rules:
+        - apiGroups:
+            - authentication.k8s.io
+          attributeRestrictions: null
+          resources:
+            - tokenreviews
+          verbs:
+            - create
+        - apiGroups:
+            - authorization.k8s.io
+          attributeRestrictions: null
+          resources:
+            - subjectaccessreviews
+          verbs:
+            - create

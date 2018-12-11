@@ -1,5 +1,19 @@
 ---
 - hosts: localhost
-  remote_user: root
+  strategy: debug
+  connection: local
+
+  vars:
+    ansible_python_interpreter: '/opt/rh/python27/root/usr/bin/python'
+    verify_ssl: no
+
+  environment:
+    K8S_AUTH_KUBECONFIG: "/root/.kube/config"
+    K8S_AUTH_VERIFY_SSL: False
+
+  tasks:
+  - debug:
+      msg: "Environment: '{{ ansible_env }}'"
+
   roles:
     - prometheus-ocp

@@ -25,7 +25,7 @@
     api_version: v1
     kind: namespace
     label_selectors:
-      -  "{{ cluster_prometheus_namespace_label }}"
+      -  "{{ cluster_prometheus_namespace_label }}" # search for namespaces with the specified label to deploy prometheus and grafana in there.
   register: namespaces_prom
 
 #- debug:
@@ -36,4 +36,7 @@
 #  loop: "{{ namespaces_prom.resources | flatten(levels=1) }}"
 
 - include_tasks: app-monitoring.yml
+  loop: "{{ namespaces_prom.resources|flatten(levels=1) }}"
+
+- include_tasks: grafana.yml
   loop: "{{ namespaces_prom.resources|flatten(levels=1) }}"

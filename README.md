@@ -1,7 +1,10 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+This role deploys a customized prometheus-operator to work alongside the cluster-monitoring operator present in OpenShift >= v3.10
+
+Additionally it can be run periodically to deploy prometheus instances and corresponding grafana instances into projects with a 
+specified label
 
 Requirements
 ------------
