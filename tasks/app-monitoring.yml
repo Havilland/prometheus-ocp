@@ -8,7 +8,7 @@
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     definition:
       state: present
-      api_version: v1
+      apiVersion: v1
       kind: ServiceAccount
       metadata:
         name: '{{ cluster_prometheus_namespace_serviceAccount }}'
