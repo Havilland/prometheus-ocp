@@ -9,4 +9,4 @@ cluster_prometheus_label: app-prometheus-operator
 cluster_prometheus_namespace_label: "app-monitor=monitor"
 cluster_prometheus_namespace_serviceAccount: operated-prometheus
 cluster_prometheus_grafana_serviceAccount: custom-grafana
-cluster_prometheus_custom_label: "app-monitor=example-prometheus"
+cluster_prometheus_custom_label: "app-monitor: example-prometheus"
