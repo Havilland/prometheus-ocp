@@ -3,7 +3,7 @@
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present
-    apiVersion: v1
+    api_version: v1
     name: '{{ cluster_prometheus_grafana_serviceAccount }}'
     kind: ServiceAccount
     namespace: '{{ item.metadata.name }}'
