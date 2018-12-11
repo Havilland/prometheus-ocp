@@ -13,7 +13,7 @@
       namespace: '{{ item.metadata.name }}'
       metadata:
         labels:
-          - '{{ custom_prometheus_custom_label }}'
+          - '{{ cluster_prometheus_custom_label }}'
         
 - name: create clusterrolebinding
   k8s:
@@ -44,7 +44,7 @@
         name: '{{ cluster_prometheus_namespace_serviceAccount }}'
         namespace: '{{ item.metadata.name }}'
         labels:
-          - '{{ custom_prometheus_custom_label }}'
+          - '{{ cluster_prometheus_custom_label }}'
       labels:
         app-prometheus: prometheus
       spec:
