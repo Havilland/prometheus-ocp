@@ -7,9 +7,10 @@
     name: '{{ cluster_prometheus_grafana_serviceAccount }}'
     kind: ServiceAccount
     namespace: '{{ item.metadata.name }}'
-    metadata:
-      labels:
-        - '{{ custom_prometheus_custom_label }}'
+    definition:
+      metadata:
+        labels:
+          - '{{ custom_prometheus_custom_label }}'
 
 - name: set clusterrolebinding for grafana service account
   k8s:
