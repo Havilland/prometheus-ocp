@@ -38,7 +38,7 @@
       apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
-        name: '{{ cluster_prometheus_grafana_serviceAccount }}'-pvc
+        name: {{ cluster_prometheus_grafana_serviceAccount }}-pvc
         labels:
           app: '{{ cluster_prometheus_grafana_serviceAccount }}'
       spec:
