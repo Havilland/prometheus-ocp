@@ -47,6 +47,7 @@
         resources:
           requests:
             storage: 1Gi
+        namespace: '{{ item.metadata.name }}'
 
 #- name: create grafana deployment
 #  k8s:
