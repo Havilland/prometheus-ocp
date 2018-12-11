@@ -6,15 +6,10 @@
 - name: deploy service account
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    state: present
     api_version: v1
     kind: ServiceAccount
     name: '{{ cluster_prometheus_namespace_serviceAccount }}'
-    definition:
-      metadata:
-        name: '{{ cluster_prometheus_namespace_serviceAccount }}'
-        namespace: '{{ item.metadata.name }}'
-        labels:
-          app-monitor: '{{ cluster_prometheus_custom_label }}'
         
 - name: create clusterrolebinding
   k8s:
@@ -25,7 +20,7 @@
       metadata:
         name: '{{ cluster_prometheus_namespace_serviceAccount }}'
         labels:
-          - '{{ cluster_prometheus_custom_label }}'
+          app-monitor: '{{ cluster_prometheus_custom_label }}'
       roleRef:
         apiGroup: rbac.authorization.k8s.io
         kind: ClusterRole
@@ -45,7 +40,7 @@
         name: '{{ cluster_prometheus_namespace_serviceAccount }}'
         namespace: '{{ item.metadata.name }}'
         labels:
-          - '{{ cluster_prometheus_custom_label }}'
+          app-monitor: '{{ cluster_prometheus_custom_label }}'
       labels:
         app-prometheus: prometheus
       spec:
