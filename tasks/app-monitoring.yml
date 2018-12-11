@@ -7,7 +7,6 @@
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     definition:
-      state: present
       apiVersion: v1
       kind: ServiceAccount
       metadata:
