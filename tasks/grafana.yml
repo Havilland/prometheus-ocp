@@ -41,13 +41,14 @@
         name: "{{ cluster_prometheus_grafana_serviceAccount }}-pvc"
         labels:
           app: '{{ cluster_prometheus_grafana_serviceAccount }}'
+        namespace: '{{ item.metadata.name }}'
       spec:
         accessModes:
           - ReadWriteOnce
         resources:
           requests:
             storage: 1Gi
-        namespace: '{{ item.metadata.name }}'
+
 
 #- name: create grafana deployment
 #  k8s:
