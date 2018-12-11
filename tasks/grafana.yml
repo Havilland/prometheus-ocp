@@ -3,14 +3,13 @@
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present
-    definiton:
-      apiVersion: v1
-      name: '{{ cluster_prometheus_grafana_serviceAccount }}'
-      kind: ServiceAccount
-      namespace: '{{ item.metadata.name }}'
-      metadata:
-        labels:
-          - '{{ custom_prometheus_custom_label }}'
+    apiVersion: v1
+    name: '{{ cluster_prometheus_grafana_serviceAccount }}'
+    kind: ServiceAccount
+    namespace: '{{ item.metadata.name }}'
+    metadata:
+      labels:
+        - '{{ custom_prometheus_custom_label }}'
 
 - name: set clusterrolebinding for grafana service account
   k8s:
