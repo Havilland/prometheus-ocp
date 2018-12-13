@@ -28,7 +28,7 @@
           name: '{{ cluster_prometheus_grafana_serviceAccount }}'
           namespace: '{{ current_namespace.metadata.name }}'
 
-- name: create service/route for grafana
+- name: create service for grafana
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present

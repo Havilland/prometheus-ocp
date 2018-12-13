@@ -48,11 +48,14 @@ spec:
         - -upstream=http://localhost:{{ cluster_prometheus_grafana_service_port }}
         - -provider=openshift
 #       - '-openshift-delegate-urls={"/api/datasources": {"resource": "namespace", "verb": "get", "resourceName": "{{ current_namespace.metadata.name }}", "namespace": "{{ current_namespace.metadata.name }}"}}'
-        - '-openshift-sar={"namespace": "{{ current_namespace.metadata.name }}", "verb": "list", "resource": "services"}'
+        - '-openshift-sar={"namespace": "{{ current_namespace.metadata.name }}", "verb": "get"}'
         - -tls-cert=/etc/tls/private/tls.crt
         - -tls-key=/etc/tls/private/tls.key
         - -client-secret-file=/var/run/secrets/kubernetes.io/serviceaccount/token
         - -cookie-secret-file=/etc/proxy/secrets/session_secret
+        - '-openshift-service-account=grafana'
+        - '-openshift-ca=/etc/pki/tls/cert.pem'
+        - '-openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt'
         - -skip-auth-regex=^/metrics,/api/datasources,/api/dashboards
         volumeMounts:
         - mountPath: /etc/tls/private
