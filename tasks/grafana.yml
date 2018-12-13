@@ -69,7 +69,7 @@
           name: grafana
       spec:
         ports:
-          - name: grafana
+          - name: https
             port: 443
             protocol: TCP
             targetPort: 3000
