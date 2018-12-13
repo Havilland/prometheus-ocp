@@ -107,7 +107,7 @@
         namespace: '{{ current_namespace.metadata.name }}'
         name: grafana-config
       data:
-        defaults.ini: "|- {{ lookup('file', '{{ mktemp.stdout }}/grafana-config.yml') }}"
+        defaults.ini: "{{ lookup('file', '{{ mktemp.stdout }}/grafana-config.yml') }}"
 
   
 
