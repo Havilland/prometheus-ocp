@@ -59,12 +59,12 @@
     state: present
     definition:
       apiVersion: v1
-        kind: Secret
-        metadata:
-          name: grafana-proxy
-          namespace: '{{ item.metadata.name }}'
-        stringData:
-          session_secret: "{{ lookup('password', '/tmp/session_secret length=43 chars=ascii_letters,digits) }}="
+      kind: Secret
+      metadata:
+        name: grafana-proxy
+        namespace: '{{ item.metadata.name }}'
+      stringData:
+        session_secret: "{{ lookup('password', '/tmp/session_secret length=43 chars=ascii_letters,digits) }}="
 
 
 - name: "Grafana Deployment: create grafana pvc"
