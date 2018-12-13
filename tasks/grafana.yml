@@ -48,6 +48,7 @@
       spec:
         ports:
           - name: grafana
+            port: 443
             protocol: TCP
             targetPort: 3000
         selector:
