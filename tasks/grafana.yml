@@ -92,9 +92,11 @@
   template:
     src: "{{ item }}.j2"
     dest: "{{ mktemp.stdout }}/{{ item }}"
-  with_items:
+  loop:
     - "grafana.yml"
     - "grafana-config.yml"
+  loop_control:
+    index_var: file_var
 
 - name: "Grafana Deployment: create grafana-config configmap"
   k8s:

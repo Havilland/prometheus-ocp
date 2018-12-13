@@ -3,6 +3,12 @@
 
 # use k8s_facts to check if namespace is there > if not then start install
 
+- name: Create temp directory for doing work in
+  command: mktemp -d /tmp/prometheus-ocp-XXXXXX
+  register: mktemp
+  changed_when: False
+  check_mode: no
+
 - name: Check if cluster_prometheus is deployed
   k8s_facts:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
