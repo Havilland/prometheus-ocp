@@ -28,6 +28,28 @@
           name: '{{ cluster_prometheus_grafana_serviceAccount }}'
           namespace: '{{ current_namespace.metadata.name }}'
 
+- name: Create route for grafana
+  k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    state: present
+    definition:
+      apiVersion: route.openshift.io/v1
+      kind: Route
+      metadata:
+        name: grafana
+        namespace: '{{ current_namespace.metadata.name }}'
+      spec:
+        port:
+          targetPort: https
+        tls:
+          termination: reencrypt
+        to:
+          kind: Service
+          name: grafana
+          weight: 100
+        wildcardPolicy: None
+
+
 - name: create service for grafana
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
