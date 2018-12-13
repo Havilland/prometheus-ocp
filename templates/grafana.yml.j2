@@ -38,10 +38,10 @@ spec:
             cpu: "{{ cluster_prometheus_oauth_proxy_cpu_limit }}"
 {% endif %}
         ports:
-        - containerPort: {{ cluster_prometheus_grafana_service_port }}
+        - containerPort: {{ cluster_prometheus_grafana_port }}
           name: web
         args:
-        - -https-address=:{{ cluster_prometheus_grafana_port }}
+        - -https-address=:{{ cluster_prometheus_grafana_service_port }}
         - -http-address=
         - -email-domain=*
         - -client-id=system:serviceaccount:{{ current_namespace.metadata.name }}:{{ cluster_prometheus_grafana_serviceAccount }}
