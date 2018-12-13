@@ -6,7 +6,7 @@
     api_version: v1
     name: '{{ cluster_prometheus_grafana_serviceAccount }}'
     kind: ServiceAccount
-    namespace: '{{ item.metadata.name }}'
+    namespace: '{{ current_namespace.metadata.name }}'
 
 - name: "Grafana Deployment: set clusterrolebinding for grafana service account"
   k8s:
@@ -26,7 +26,7 @@
       subjects:
         - kind: ServiceAccount
           name: '{{ cluster_prometheus_grafana_serviceAccount }}'
-          namespace: '{{ item.metadata.name }}'
+          namespace: '{{ current_namespace.metadata.name }}'
 
 - name: create service/route for grafana
   k8s:
@@ -41,7 +41,7 @@
           prometheus.io/scrape: "true"
           prometheus.io/scheme: https
           service.alpha.openshift.io/serving-cert-secret-name: grafana-tls
-        namespace: '{{ item.metadata.name }}'
+        namespace: '{{ current_namespace.metadata.name }}'
         labels:
 #            metrics-infra: grafana
           name: grafana
@@ -63,7 +63,7 @@
       kind: Secret
       metadata:
         name: grafana-proxy
-        namespace: '{{ item.metadata.name }}'
+        namespace: '{{ current_namespace.metadata.name }}'
       stringData:
         session_secret: "{{ lookup('password', '/tmp/session_secret length=43 chars=ascii_letters,digits') }}"
 
@@ -80,7 +80,7 @@
         labels:
           app: '{{ cluster_prometheus_grafana_serviceAccount }}'
           app-monitor: '{{ cluster_prometheus_custom_label }}'
-        namespace: '{{ item.metadata.name }}'
+        namespace: '{{ current_namespace.metadata.name }}'
       spec:
         accessModes:
           - ReadWriteOnce
@@ -90,13 +90,12 @@
 
 - name: "Grafana Deployment: template deployment and grafana-config"
   template:
-    src: "{{ file_var }}.j2"
-    dest: "{{ mktemp.stdout }}/{{ file_var }}"
+    src: "{{ item }}.j2"
+    dest: "{{ mktemp.stdout }}/{{ item }}"
   loop:
     - "grafana.yml"
     - "grafana-config.yml"
-  loop_control:
-    index_var: file_var
+  
 
 - name: "Grafana Deployment: create grafana-config configmap"
   k8s:

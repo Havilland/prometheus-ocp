@@ -43,6 +43,10 @@
 
 - include_tasks: app-monitoring.yml
   loop: "{{ namespaces_prom.resources|flatten(levels=1) }}"
+  loop_control:
+    index_var: current_namespace
 
 - include_tasks: grafana.yml
   loop: "{{ namespaces_prom.resources|flatten(levels=1) }}"
+  loop_control:
+    index_var: current_namespace

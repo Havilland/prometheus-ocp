@@ -1,7 +1,7 @@
 ---
 - name: print debug var of namespace
   debug:
-    msg: "Variable: {{ item.metadata.name }}"
+    msg: "Variable: {{ current_namespace.metadata.name }}"
 
 - name: "Prometheus Deployment: deploy service account"
   k8s:
@@ -10,7 +10,7 @@
     api_version: v1
     kind: ServiceAccount
     name: '{{ cluster_prometheus_namespace_serviceAccount }}'
-    namespace: '{{ item.metadata.name }}'
+    namespace: '{{ current_namespace.metadata.name }}'
         
 - name: "Prometheus Deployment: create clusterrolebinding"
   k8s:
@@ -29,7 +29,7 @@
       subjects:
       - kind: ServiceAccount
         name: '{{ cluster_prometheus_namespace_serviceAccount }}'
-        namespace: '{{ item.metadata.name }}'
+        namespace: '{{ current_namespace.metadata.name }}'
 
 - name: "Prometheus Deployment: Deploy prometheus custom resource to namespace"
   k8s:
@@ -39,7 +39,7 @@
       kind: Prometheus
       metadata:
         name: '{{ cluster_prometheus_namespace_serviceAccount }}'
-        namespace: '{{ item.metadata.name }}'
+        namespace: '{{ current_namespace.metadata.name }}'
         labels:
           app-monitor: '{{ cluster_prometheus_custom_label }}'
       labels:
