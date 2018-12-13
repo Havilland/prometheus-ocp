@@ -7,6 +7,10 @@
     name: '{{ cluster_prometheus_grafana_serviceAccount }}'
     kind: ServiceAccount
     namespace: '{{ current_namespace.metadata.name }}'
+    definition:
+      metadata:
+        annotations:
+           serviceaccounts.openshift.io/oauth-redirectreference.primary='{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"grafana"}}'
 
 - name: "Grafana Deployment: set clusterrolebinding for grafana service account"
   k8s:
