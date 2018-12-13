@@ -41,7 +41,7 @@ spec:
         - containerPort: {{ cluster_prometheus_grafana_service_port }}
           name: web
         args:
-        - -https-address=:{{ cluster_prometheus_grafana_service_port }}
+        - -https-address=:{{ cluster_prometheus_grafana_port }}
         - -http-address=
         - -email-domain=*
         - -client-id=system:serviceaccount:{{ current_namespace.metadata.name }}:{{ cluster_prometheus_grafana_serviceAccount }}
@@ -83,7 +83,7 @@ spec:
 {% endif %}
         ports:
         - name: grafana-http
-          containerPort: {{ cluster_prometheus_grafana_service_port }}
+          containerPort: {{ cluster_prometheus_grafana_port }}
         volumeMounts:
         - mountPath: "/var/lib/grafana"
           name: grafana-data

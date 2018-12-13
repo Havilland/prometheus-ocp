@@ -26,3 +26,4 @@ cluster_prometheus_oauth_proxy_memory_limit: 100Mi
 cluster_prometheus_oauth_proxy_cpu_limit: 100m
 
 cluster_prometheus_grafana_storage_type: none
+cluster_prometheus_grafana_port: 3001
