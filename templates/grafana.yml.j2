@@ -90,8 +90,8 @@ spec:
           name: grafana-tls-secret
         - mountPath: /etc/proxy/secrets
           name: grafana-proxy-secrets
-        command:
-         - "./bin/grafana-server"
+        args:
+          - '-config=/etc/grafana/grafana.ini'
       volumes:
       - name: grafana-config
         configMap:
