@@ -99,7 +99,7 @@
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present
-    src: {{ mktemp.stdout }}/grafana.yml
+    src: "{{ mktemp.stdout }}/grafana.yml"
 
 #- name: create grafana deployment
 #  k8s:
