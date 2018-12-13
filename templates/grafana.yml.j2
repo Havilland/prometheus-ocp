@@ -103,7 +103,7 @@ spec:
         secret:
           secretName: grafana-tls
       - name: grafana-data
-{% if grafana_storage_type == 'pvc' %}
+{% if cluster_prometheus_grafana_storage_type == 'pvc' %}
         persistentVolumeClaim:
           claimName: {{ grafana_pvc_name }}
 {% else %}
