@@ -48,7 +48,7 @@ spec:
         - -upstream=http://localhost:{{ cluster_prometheus_grafana_service_port }}
         - -provider=openshift
 #       - '-openshift-delegate-urls={"/api/datasources": {"resource": "namespace", "verb": "get", "resourceName": "{{ current_namespace.metadata.name }}", "namespace": "{{ current_namespace.metadata.name }}"}}'
-        - '-openshift-sar={"namespace": "{{ current_namespace.metadata.name }}", "verb": "get"}'
+        - '-openshift-sar={"namespace": "{{ current_namespace.metadata.name }}", "verb": "list", "resource": "services"}'
         - -tls-cert=/etc/tls/private/tls.crt
         - -tls-key=/etc/tls/private/tls.key
         - -client-secret-file=/var/run/secrets/kubernetes.io/serviceaccount/token
