@@ -90,8 +90,8 @@
 
 - name: "Grafana Deployment: template deployment and grafana-config"
   template:
-    src: "{{ item }}.j2"
-    dest: "{{ mktemp.stdout }}/{{ item }}"
+    src: "{{ file_var }}.j2"
+    dest: "{{ mktemp.stdout }}/{{ file_var }}"
   loop:
     - "grafana.yml"
     - "grafana-config.yml"
