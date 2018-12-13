@@ -105,7 +105,7 @@ spec:
       - name: grafana-data
 {% if cluster_prometheus_grafana_storage_type == 'pvc' %}
         persistentVolumeClaim:
-          claimName: {{ grafana_pvc_name }}
+          claimName: {{ cluster_prometheus_grafana_serviceAccount }}-pvc
 {% else %}
         emptydir: {}
 {% endif %}

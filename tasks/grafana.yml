@@ -95,6 +95,20 @@
   loop:
     - "grafana.yml"
     - "grafana-config.yml"
+
+- name: create grafana-config configmap
+  k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        namespace: '{{ current_namespace.metadata.name }}'
+        name: grafana-config
+      data:
+        defaults.ini: "|- {{ lookup('file', '{{ mktemp.stdout }}/grafana-config.yml') }}"
+
   
 
 - name: "Grafana Deployment: create grafana-config configmap"
