@@ -10,3 +10,17 @@ cluster_prometheus_namespace_label: "app-monitor=monitor"
 cluster_prometheus_namespace_serviceAccount: operated-prometheus
 cluster_prometheus_grafana_serviceAccount: custom-grafana
 cluster_prometheus_custom_label: "example-prometheus"
+
+cluster_prometheus_grafana_image: 'registry.access.redhat.com/openshift3/grafana:v3.11'
+cluster_prometheus_oauth_image: 'registry.access.redhat.com/openshift3/oauth-proxy:v3.11'
+
+cluster_prometheus_grafana_service_port: 3000
+cluster_prometheus_grafana_memory_requests: 100Mi
+cluster_prometheus_grafana_memory_limit: 200Mi
+cluster_prometheus_grafana_cpu_requests: 100m
+cluster_prometheus_grafana_cpu_limit: 200m
+
+cluster_prometheus_oauth_proxy_memory_requests: 100Mi
+cluster_prometheus_oauth_proxy_cpu_requests: 100m
+cluster_prometheus_oauth_proxy_memory_limit: 100Mi
+cluster_prometheus_oauth_proxy_cpu_limit: 100m

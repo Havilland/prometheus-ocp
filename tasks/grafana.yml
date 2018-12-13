@@ -28,10 +28,44 @@
           name: '{{ cluster_prometheus_grafana_serviceAccount }}'
           namespace: '{{ item.metadata.name }}'
 
-#- name: create service/route for grafana
-#  k8s:
-#    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
-#    state: present
+- name: create service/route for grafana
+  k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    state: present
+    definition:
+      apiVersion: v1
+        kind: Service
+        metadata:
+          name: grafana
+          annotations:
+            prometheus.io/scrape: "true"
+            prometheus.io/scheme: https
+            service.alpha.openshift.io/serving-cert-secret-name: grafana-tls
+          namespace: '{{ item.metadata.name }}'
+          labels:
+#            metrics-infra: grafana
+            name: grafana
+        spec:
+          ports:
+            - name: grafana
+              protocol: TCP
+              targetPort: 3000
+          selector:
+            app: grafana
+
+- name:
+  k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    state: present
+    definition:
+      apiVersion: v1
+        kind: Secret
+        metadata:
+          name: grafana-proxy
+          namespace: '{{ item.metadata.name }}'
+        stringData:
+          session_secret: "{{ lookup('password', '/tmp/session_secret length=43 chars=ascii_letters,digits) }}="
+
 
 - name: "Grafana Deployment: create grafana pvc"
   k8s:
@@ -53,6 +87,19 @@
           requests:
             storage: 1Gi
 
+- name: "Grafana Deployment: template deployment and grafana-config"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ mktemp.stdout }}/{{ item }}"
+  with_items:
+    - "grafana.yml"
+    - "grafana-config.yml"
+
+- name: "Grafana Deployment: create grafana-config configmap"
+  k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    state: present
+    src: {{ mktemp.stdout }}/grafana.yml
 
 #- name: create grafana deployment
 #  k8s:
