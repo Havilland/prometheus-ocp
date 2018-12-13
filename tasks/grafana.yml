@@ -34,24 +34,24 @@
     state: present
     definition:
       apiVersion: v1
-        kind: Service
-        metadata:
-          name: grafana
-          annotations:
-            prometheus.io/scrape: "true"
-            prometheus.io/scheme: https
-            service.alpha.openshift.io/serving-cert-secret-name: grafana-tls
-          namespace: '{{ item.metadata.name }}'
-          labels:
+      kind: Service
+      metadata:
+        name: grafana
+        annotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/scheme: https
+          service.alpha.openshift.io/serving-cert-secret-name: grafana-tls
+        namespace: '{{ item.metadata.name }}'
+        labels:
 #            metrics-infra: grafana
-            name: grafana
-        spec:
-          ports:
-            - name: grafana
-              protocol: TCP
-              targetPort: 3000
-          selector:
-            app: grafana
+          name: grafana
+      spec:
+        ports:
+          - name: grafana
+            protocol: TCP
+            targetPort: 3000
+        selector:
+          app: grafana
 
 - name:
   k8s:
