@@ -1,7 +1,7 @@
 ---
 - name: print debug var of namespace
   debug:
-    msg: "Variable: {{ current_namespace.metadata.name }}"
+    var: current_namespace
 
 - name: "Prometheus Deployment: deploy service account"
   k8s:
