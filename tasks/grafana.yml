@@ -53,7 +53,7 @@
         selector:
           app: grafana
 
-- name:
+- name: Create grafana session_secret
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present
@@ -64,7 +64,7 @@
         name: grafana-proxy
         namespace: '{{ item.metadata.name }}'
       stringData:
-        session_secret: "{{ lookup('password', '/tmp/session_secret length=43 chars=ascii_letters,digits) }}="
+        session_secret: "{{ lookup('password', '/tmp/session_secret length=43 chars=ascii_letters,digits) }}"
 
 
 - name: "Grafana Deployment: create grafana pvc"
