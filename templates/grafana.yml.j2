@@ -41,7 +41,7 @@ spec:
         - containerPort: {{ cluster_prometheus_grafana_port }}
           name: web
         args:
-        - -https-address=:{{ cluster_prometheus_grafana_oauth_port }}
+        - -https-address=:{{ cluster_prometheus_grafana_port }}
         - -http-address=
         - -email-domain=*
         - -client-id=system:serviceaccount:{{ current_namespace.metadata.name }}:{{ cluster_prometheus_grafana_serviceAccount }}
