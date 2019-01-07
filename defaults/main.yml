@@ -14,8 +14,8 @@ cluster_prometheus_custom_label: "example-prometheus"
 cluster_prometheus_grafana_image: 'registry.access.redhat.com/openshift3/grafana:v3.11'
 cluster_prometheus_oauth_image: 'registry.access.redhat.com/openshift3/oauth-proxy:v3.11'
 
-cluster_prometheus_grafana_oauth_port: 3001
-cluster_prometheus_grafana_port: 3000
+cluster_prometheus_grafana_oauth_port: 3000
+cluster_prometheus_grafana_port: 3001
 
 cluster_prometheus_grafana_memory_requests: 100Mi
 cluster_prometheus_grafana_memory_limit: 200Mi

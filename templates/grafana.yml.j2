@@ -38,14 +38,14 @@ spec:
             cpu: "{{ cluster_prometheus_oauth_proxy_cpu_limit }}"
 {% endif %}
         ports:
-        - containerPort: {{ cluster_prometheus_grafana_port }}
+        - containerPort: {{ cluster_prometheus_grafana_oauth_port }}
           name: https
         args:
-        - -https-address=:{{ cluster_prometheus_grafana_port }}
+        - -https-address=:{{ cluster_prometheus_grafana_oauth_port }}
         - -http-address=
         - -email-domain=*
         - -client-id=system:serviceaccount:{{ current_namespace.metadata.name }}:{{ cluster_prometheus_grafana_serviceAccount }}
-        - -upstream=http://localhost:{{ cluster_prometheus_grafana_oauth_port }}
+        - -upstream=http://localhost:{{ cluster_prometheus_grafana_port }}
         - -provider=openshift
         - '-openshift-sar={"namespace": "{{ current_namespace.metadata.name }}", "verb": "list", "resource": "services"}'
         - -tls-cert=/etc/tls/private/tls.crt
@@ -82,7 +82,7 @@ spec:
 {% endif %}
         ports:
         - name: grafana-http
-          containerPort: {{ cluster_prometheus_grafana_port }}
+          containerPort: {{ cluster_prometheus_grafana_oauth_port }}
         volumeMounts:
         - mountPath: "/var/lib/grafana"
           name: grafana-data
