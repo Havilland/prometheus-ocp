@@ -136,7 +136,7 @@
               - --config-reloader-image=quay.io/coreos/configmap-reload:v0.0.1
               - --prometheus-config-reloader=quay.io/coreos/prometheus-config-reloader:{{ cluster_prometheus_operator_version }}
               - --crd-apigroup={{ cluster_prometheus_apiGroup }}
-              - --disable-auto-user-group runAsUser
+              - --disable-auto-user-group
               image: quay.io/coreos/prometheus-operator:{{ cluster_prometheus_operator_version }}
               name: '{{ cluster_prometheus_namespace }}-operator'
               ports:

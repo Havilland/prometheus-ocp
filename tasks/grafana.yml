@@ -74,9 +74,9 @@
       spec:
         ports:
           - name: https
-            port: 443
+            port: '{{ cluster_prometheus_grafana_port }}'
             protocol: TCP
-            targetPort: 3000
+            targetPort: https
         selector:
           app: grafana
 
@@ -143,16 +143,12 @@
     state: present
     src: "{{ mktemp.stdout }}/grafana.yml"
 
-#- name: create grafana deployment
-#  k8s:
-#    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
-#    state: present
 
 #- name: get prometheus service
 #  k8s:
 #    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
 #    state: present
 
-#- name: create grafana datasource (uri call to grafana api)
+#- name: create grafana datasource (dump in secret and mount to grafana)
 
 #- name: create example dashboard
