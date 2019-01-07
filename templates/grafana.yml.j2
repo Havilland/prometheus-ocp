@@ -39,7 +39,7 @@ spec:
 {% endif %}
         ports:
         - containerPort: {{ cluster_prometheus_grafana_port }}
-          name: web
+          name: https
         args:
         - -https-address=:{{ cluster_prometheus_grafana_port }}
         - -http-address=
