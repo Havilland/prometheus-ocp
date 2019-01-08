@@ -17,6 +17,7 @@ spec:
   secrets:
     - prometheus-tls
     - prometheus-proxy
+  listenLocal: true
   containers:
     - args:
         - '-provider=openshift'
