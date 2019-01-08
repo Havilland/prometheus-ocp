@@ -56,7 +56,7 @@
             protocol: TCP
             targetPort: web
         selector:
-          app: '{{ cluster_prometheus_namespace_serviceAccount }}'
+          prometheus: '{{ cluster_prometheus_namespace_serviceAccount }}'
 
 - name: Create route for grafana
   k8s:
