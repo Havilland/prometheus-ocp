@@ -41,7 +41,7 @@
       metadata:
         name: '{{ cluster_prometheus_namespace_serviceAccount }}'
         annotations:
-          service.alpha.openshift.io/serving-cert-secret-name: "{{ cluster_prometheus_namespace_serviceAccount }}-tls"
+          service.alpha.openshift.io/serving-cert-secret-name: prometheus-tls
         namespace: '{{ current_namespace.metadata.name }}'
         labels:
           name: '{{ cluster_prometheus_namespace_serviceAccount }}'

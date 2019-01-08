@@ -15,7 +15,7 @@ spec:
     matchLabels:
       team: frontend
   secrets:
-    - {{ cluster_prometheus_namespace_serviceAccount }}-tls
+    - prometheus-tls
     - {{ cluster_prometheus_namespace_serviceAccount }}-proxy
   containers:
     - args:
@@ -46,6 +46,6 @@ spec:
       resources: {}
       volumeMounts:
         - mountPath: /etc/tls/private
-          name: {{ cluster_prometheus_namespace_serviceAccount }}-tls
+          name: prometheus-tls
         - mountPath: /etc/proxy/secrets
           name: {{ cluster_prometheus_namespace_serviceAccount }}-proxy
