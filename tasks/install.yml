@@ -173,6 +173,13 @@
             - tokenreviews
           verbs:
             - create
+        - apiGroups:
+            - authorization.k8s.io
+          attributeRestrictions: null
+          resources:
+            - subjectaccessreviews
+          verbs:
+            - create
         - apiGroups: [""]
           resources:
           - nodes
