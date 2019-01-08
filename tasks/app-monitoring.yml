@@ -70,7 +70,7 @@
         namespace: '{{ current_namespace.metadata.name }}'
       spec:
         port:
-          targetPort: https
+          targetPort: web
         tls:
           termination: reencrypt
         to:
