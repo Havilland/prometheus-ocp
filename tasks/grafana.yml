@@ -114,6 +114,16 @@
           requests:
             storage: 1Gi
 
+- name: get prometheus service
+  k8s_facts:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    api_version: v1
+    kind: service
+    namespace: '{{ current_namespace.metadata.name }}'
+    label_selectors:
+      - operated-prometheus=true
+    register: prometheus_service
+
 - name: "Grafana Deployment: template deployment and grafana-config"
   template:
     src: "{{ item }}.j2"
@@ -121,6 +131,7 @@
   loop:
     - "grafana.yml"
     - "grafana-config.yml"
+    - "grafana-datasources.yml"
 
 - name: create grafana-config configmap
   k8s:
@@ -135,20 +146,28 @@
       data:
         grafana.ini: "{{ lookup('file', '{{ mktemp.stdout }}/grafana-config.yml') }}"
 
-  
+- name: create grafana-datasources configmap
+  - name:
+    k8s:
+      verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+      state: present
+      definition:
+        apiVersion: v1
+        kind: ConfigMap
+        metadata:
+          namespace: '{{ current_namespace.metadata.name }}'
+          name: grafana-datasources
+        data:
+          prometheus.yaml: "{{ lookup('file', '{{ mktemp.stdout }}/grafana-datasources.yml') }}"
 
-- name: "Grafana Deployment: create grafana-config configmap"
+#- name: create grafana datasource (dump in secret or configMap and mount to grafana)
+
+- name: "Grafana Deployment: create grafana deployment"
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
     state: present
     src: "{{ mktemp.stdout }}/grafana.yml"
 
 
-#- name: get prometheus service
-#  k8s:
-#    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
-#    state: present
-
-#- name: create grafana datasource (dump in secret and mount to grafana)
 
 #- name: create example dashboard

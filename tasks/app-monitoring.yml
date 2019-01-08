@@ -31,25 +31,75 @@
         name: '{{ cluster_prometheus_namespace_serviceAccount }}'
         namespace: '{{ current_namespace.metadata.name }}'
 
-- name: "Prometheus Deployment: Deploy prometheus custom resource to namespace"
+- name: create service for prometheus
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    state: present
     definition:
-      apiVersion: '{{ cluster_prometheus_apiGroup }}/v1'
-      kind: Prometheus
+      apiVersion: v1
+      kind: Service
       metadata:
         name: '{{ cluster_prometheus_namespace_serviceAccount }}'
+        annotations:
+          service.alpha.openshift.io/serving-cert-secret-name: '{{ cluster_prometheus_namespace_serviceAccount }}'-tls
         namespace: '{{ current_namespace.metadata.name }}'
         labels:
-          app-monitor: '{{ cluster_prometheus_custom_label }}'
-      labels:
-        app-prometheus: prometheus
+          name: '{{ cluster_prometheus_namespace_serviceAccount }}'
       spec:
-        replicas: 2
-        serviceAccountName: '{{ cluster_prometheus_namespace_serviceAccount }}'
-        serviceMonitorSelector:
-          matchLabels:
-            team: frontend
+        ports:
+          - name: web
+            port: 9091
+            protocol: TCP
+            targetPort: web
+        selector:
+          app: '{{ cluster_prometheus_namespace_serviceAccount }}'
+
+
+- name: Create prometheus session_secret
+  k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: '{{ cluster_prometheus_namespace_serviceAccount }}'-proxy
+        namespace: '{{ current_namespace.metadata.name }}'
+      stringData:
+        session_secret: "{{ lookup('password', '/tmp/session_secret length=43 chars=ascii_letters,digits') }}"
+
+- name: "Prometheus Deployment: template deployment"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ mktemp.stdout }}/{{ item }}"
+  loop:
+    - "prometheus.yml"
+
+- name: "Prometheus Deployment: create prometheus CRD deployment"
+  k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    state: present
+    src: "{{ mktemp.stdout }}/prometheus.yml"
+
+#- name: "Prometheus Deployment: Deploy prometheus custom resource to namespace"
+#  k8s:
+#    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+#    definition:
+#      apiVersion: '{{ cluster_prometheus_apiGroup }}/v1'
+#      kind: Prometheus
+#      metadata:
+#        name: '{{ cluster_prometheus_namespace_serviceAccount }}'
+#        namespace: '{{ current_namespace.metadata.name }}'
+#        labels:
+#          app-monitor: '{{ cluster_prometheus_custom_label }}'
+#      labels:
+#        app-prometheus: prometheus
+#      spec:
+#        replicas: 2
+#        serviceAccountName: '{{ cluster_prometheus_namespace_serviceAccount }}'
+#        serviceMonitorSelector:
+#          matchLabels:
+#            team: frontend
 
 
 #- name: deploy pushgateway

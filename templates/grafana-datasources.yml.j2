@@ -1,0 +1,20 @@
+{
+    "apiVersion": 1,
+    "datasources": [
+        {
+            "access": "proxy",
+            "basicAuth": true,
+            "basicAuthPassword": "{{ prometheus_token }}",
+            "basicAuthUser": "internal",
+            "editable": false,
+            "jsonData": {
+                "tlsSkipVerify": true
+            },
+            "name": "prometheus",
+            "orgId": 1,
+            "type": "prometheus",
+            "url": "{{ prometheus_service_url }}",
+            "version": 1
+        }
+    ]
+}
