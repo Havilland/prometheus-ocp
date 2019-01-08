@@ -16,7 +16,7 @@ spec:
       team: frontend
   secrets:
     - prometheus-tls
-    - {{ cluster_prometheus_namespace_serviceAccount }}-proxy
+    - prometheus-proxy
   containers:
     - args:
         - '-provider=openshift'
@@ -48,4 +48,4 @@ spec:
         - mountPath: /etc/tls/private
           name: prometheus-tls
         - mountPath: /etc/proxy/secrets
-          name: {{ cluster_prometheus_namespace_serviceAccount }}-proxy
+          name: prometheus-proxy

@@ -63,7 +63,7 @@
       apiVersion: v1
       kind: Secret
       metadata:
-        name: '{{ cluster_prometheus_namespace_serviceAccount }}'-proxy
+        name: prometheus-proxy
         namespace: '{{ current_namespace.metadata.name }}'
       stringData:
         session_secret: "{{ lookup('password', '/tmp/session_secret length=43 chars=ascii_letters,digits') }}"
