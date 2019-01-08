@@ -122,7 +122,7 @@
     namespace: '{{ current_namespace.metadata.name }}'
     label_selectors:
       - operated-prometheus=true
-    register: prometheus_service
+  register: prometheus_service
 
 - name: "Grafana Deployment: template deployment and grafana-config"
   template:
