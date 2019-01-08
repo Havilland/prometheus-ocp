@@ -13,8 +13,7 @@
     namespace: '{{ current_namespace.metadata.name }}'
     definition:
       annotations:
-        serviceaccounts.openshift.io/oauth-redirectreference.prrimary: >-
-          {"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"prometheus"}}
+        serviceaccounts.openshift.io/oauth-redirectreference.prrimary: {"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"prometheus"}}
         
 - name: "Prometheus Deployment: create clusterrolebinding"
   k8s:
