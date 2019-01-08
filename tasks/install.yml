@@ -166,19 +166,26 @@
       metadata:
         name: "{{ cluster_prometheus_namespace_serviceAccount }}"
       rules:
-      - apiGroups: [""]
-        resources:
-        - nodes
-        - services
-        - endpoints
-        - pods
-        verbs: ["get", "list", "watch"]
-      - apiGroups: [""]
-        resources:
-        - configmaps
-        verbs: ["get"]
-      - nonResourceURLs: ["/metrics"]
-        verbs: ["get"]
+        - apiGroups:
+            - authentication.k8s.io
+          attributeRestrictions: null
+          resources:
+            - tokenreviews
+          verbs:
+            - create
+        - apiGroups: [""]
+          resources:
+          - nodes
+          - services
+          - endpoints
+          - pods
+          verbs: ["get", "list", "watch"]
+        - apiGroups: [""]
+          resources:
+          - configmaps
+          verbs: ["get"]
+        - nonResourceURLs: ["/metrics"]
+          verbs: ["get"]
 
 - name: "Base Installation: Create clusterrole for grafana"
   k8s:
