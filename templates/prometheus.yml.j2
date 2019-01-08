@@ -26,10 +26,8 @@ spec:
         - '-email-domain=*'
         - '-upstream=http://localhost:9090'
         - '-openshift-service-account={{ cluster_prometheus_namespace_serviceAccount }}'
-        - '-openshift-sar={"resource": "namespaces", "verb": "get"}'
-        - >-
-          -openshift-delegate-urls={"/": {"resource": "namespaces", "verb":
-          "get"}}
+        - -client-id=system:serviceaccount:{{ current_namespace.metadata.name }}:{{ cluster_prometheus_namespace_serviceAccount }}
+        - '-openshift-sar={"namespace": "{{ current_namespace.metadata.name }}", "verb": "list", "resource": "services"}'
         - '-tls-cert=/etc/tls/private/tls.crt'
         - '-tls-key=/etc/tls/private/tls.key'
         - >-
