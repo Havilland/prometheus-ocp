@@ -128,35 +128,3 @@
     state: present
     src: "{{ mktemp.stdout }}/prometheus.yml"
 
-#- name: "Prometheus Deployment: Deploy prometheus custom resource to namespace"
-#  k8s:
-#    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
-#    definition:
-#      apiVersion: '{{ cluster_prometheus_apiGroup }}/v1'
-#      kind: Prometheus
-#      metadata:
-#        name: '{{ cluster_prometheus_namespace_serviceAccount }}'
-#        namespace: '{{ current_namespace.metadata.name }}'
-#        labels:
-#          app-monitor: '{{ cluster_prometheus_custom_label }}'
-#      labels:
-#        app-prometheus: prometheus
-#      spec:
-#        replicas: 2
-#        serviceAccountName: '{{ cluster_prometheus_namespace_serviceAccount }}'
-#        serviceMonitorSelector:
-#          matchLabels:
-#            team: frontend
-
-
-#- name: deploy pushgateway
-#  k8s:
-#    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
-#    api_version:
-#    
-#- name: deploy pushgateway servicemonitor
-#  k8s:
-#    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
-#    api_version:
-
-    

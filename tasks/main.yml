@@ -19,9 +19,6 @@
       - k8s-app = {{ cluster_prometheus_label }}
   register: prometheus_operator
 
-#- debug:
-#    var: prometheus_operator.resources
-
 - include_tasks: install.yml
   when: prometheus_operator.resources | length == 0 
 
@@ -33,13 +30,6 @@
     label_selectors:
       -  "{{ cluster_prometheus_namespace_label }}" # search for namespaces with the specified label to deploy prometheus and grafana in there.
   register: namespaces_prom
-
-#- debug:
-#    var: namespaces_prom
-
-#- debug:
-#    msg: "item: {{ item.metadata.name }}"
-#  loop: "{{ namespaces_prom.resources | flatten(levels=1) }}"
 
 - include_tasks: app-monitoring.yml
   loop: "{{ namespaces_prom.resources|flatten(levels=1) }}"

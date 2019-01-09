@@ -1,3 +1,4 @@
+---
 - name: "Base Installation: create Namespace if not present"
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
