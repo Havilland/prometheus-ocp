@@ -17,6 +17,7 @@ spec:
   secrets:
     - prometheus-tls
     - prometheus-proxy
+    - prometheus-htpasswd
   listenLocal: true
   containers:
     - args:
@@ -25,6 +26,7 @@ spec:
         - '-http-address='
         - '-email-domain=*'
         - '-upstream=http://localhost:9090'
+        - '-htpasswd-file=/etc/proxy/htpasswd/auth'
         - -client-id=system:serviceaccount:{{ current_namespace.metadata.name }}:{{ cluster_prometheus_namespace_serviceAccount }}
         - '-openshift-service-account={{ cluster_prometheus_namespace_serviceAccount }}'
         - '-openshift-sar={"namespace": "{{ current_namespace.metadata.name }}", "verb": "list", "resource": "services"}'
@@ -47,3 +49,5 @@ spec:
           name: secret-prometheus-tls
         - mountPath: /etc/proxy/secrets
           name: secret-prometheus-proxy
+        - mountPath: /etc/proxy/htpasswd/auth
+          name: secret-prometheus-htpasswd
