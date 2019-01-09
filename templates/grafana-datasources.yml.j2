@@ -4,7 +4,7 @@
         {
             "access": "proxy",
             "basicAuth": true,
-            "basicAuthPassword": "{{ prometheus_token }}",
+            "basicAuthPassword": "{{ session_secret }}",
             "basicAuthUser": "internal",
             "editable": false,
             "jsonData": {
@@ -13,7 +13,7 @@
             "name": "prometheus",
             "orgId": 1,
             "type": "prometheus",
-            "url": "{{ prometheus_service_url }}",
+        #    "url": "{{ prometheus_service_url }}",
             "version": 1
         }
     ]
