@@ -12,7 +12,7 @@
   register: prometheus_deployment
 
 - name: Deploying Prometheus in namespace
-    block:
+  block:
     - name: "Prometheus Deployment: deploy service account"
       k8s:
         verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
