@@ -78,6 +78,10 @@
           weight: 100
         wildcardPolicy: None
 
+- name: Generate session_secret
+  set_fact:
+    session_secret: "{{ lookup('password', '/tmp/session_secret length=43 chars=ascii_letters,digits') }}"
+
 - name: Create prometheus session_secret
   k8s:
     verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
@@ -89,7 +93,7 @@
         name: prometheus-proxy
         namespace: '{{ current_namespace.metadata.name }}'
       stringData:
-        session_secret: "{{ lookup('password', '/tmp/session_secret length=43 chars=ascii_letters,digits') }}"
+        session_secret: "{{ session_secret }}"
 
 - name: "Prometheus Deployment: template deployment"
   template:
