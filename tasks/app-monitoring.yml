@@ -101,6 +101,8 @@
     password: '{{ session_secret }}'
     crypt_scheme: ldap_sha1
 
+
+
 - name: "Prometheus Deployment: template deployment"
   template:
     src: "{{ item }}.j2"
