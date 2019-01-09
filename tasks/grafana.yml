@@ -147,18 +147,17 @@
         grafana.ini: "{{ lookup('file', '{{ mktemp.stdout }}/grafana-config.yml') }}"
 
 - name: create grafana-datasources configmap
-  - name:
-    k8s:
-      verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
-      state: present
-      definition:
-        apiVersion: v1
-        kind: ConfigMap
-        metadata:
-          namespace: '{{ current_namespace.metadata.name }}'
-          name: grafana-datasources
-        data:
-          prometheus.yaml: "{{ lookup('file', '{{ mktemp.stdout }}/grafana-datasources.yml') }}"
+  k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        namespace: '{{ current_namespace.metadata.name }}'
+        name: grafana-datasources
+      data:
+        prometheus.yaml: "{{ lookup('file', '{{ mktemp.stdout }}/grafana-datasources.yml') }}"
 
 #- name: create grafana datasource (dump in secret or configMap and mount to grafana)
 
