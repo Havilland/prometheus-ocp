@@ -101,7 +101,18 @@
     password: '{{ session_secret }}'
     crypt_scheme: ldap_sha1
 
-
+- name: Create prometheus htpasswd auth secret
+  k8s:
+    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: prometheus-htpasswd
+        namespace: '{{ current_namespace.metadata.name }}'
+      stringData:
+        auth: "{{ lookup('file', '{{ mktemp.stdout }}/prometheus.htpasswd') }}"
 
 - name: "Prometheus Deployment: template deployment"
   template:
