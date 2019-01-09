@@ -14,7 +14,7 @@
             "name": "prometheus",
             "orgId": 1,
             "type": "prometheus",
-        {#    "url": "{{ prometheus_service_url }}",#}
+            "url": "https://prometheus.{{ current_namespace.metadata.name }}.svc:9091",
             "version": 1
         }
     ]

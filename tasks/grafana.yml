@@ -114,16 +114,6 @@
           requests:
             storage: 1Gi
 
-- name: get prometheus service
-  k8s_facts:
-    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
-    api_version: v1
-    kind: service
-    namespace: '{{ current_namespace.metadata.name }}'
-    label_selectors:
-      - operated-prometheus=true
-  register: prometheus_service
-
 - name: "Grafana Deployment: template deployment and grafana-config"
   template:
     src: "{{ item }}.j2"
@@ -158,6 +148,7 @@
 #        name: grafana-datasources
 #      data:
 #        prometheus.yaml: "{{ lookup('file', '{{ mktemp.stdout }}/grafana-datasources.yml') }}"
+
 
 - name: Create grafana datasource secret
   k8s:
