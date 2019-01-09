@@ -92,12 +92,18 @@ spec:
           name: grafana-tls-secret
         - mountPath: /etc/proxy/secrets
           name: grafana-proxy-secrets
+        - name: grafana-datasources
+          mountPath: /etc/grafana/provisioning/datasources
         args:
           - '-config=/etc/grafana/grafana.ini'
       volumes:
       - name: grafana-config
         configMap:
           name: grafana-config
+      - name: grafana-datasources
+        secret:
+          secretName: grafana-datasources
+          defaultMode: 420
       - name: grafana-proxy-secrets
         secret:
           secretName: grafana-proxy
