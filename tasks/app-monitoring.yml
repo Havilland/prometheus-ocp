@@ -47,7 +47,8 @@
           service.alpha.openshift.io/serving-cert-secret-name: prometheus-tls
         namespace: '{{ current_namespace.metadata.name }}'
         labels:
-          name: '{{ cluster_prometheus_namespace_serviceAccount }}'
+        #  name: '{{ cluster_prometheus_namespace_serviceAccount }}'
+          app-monitor: monitor
       spec:
         ports:
           - name: web
