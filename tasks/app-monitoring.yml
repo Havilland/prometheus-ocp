@@ -96,7 +96,7 @@
         session_secret: "{{ session_secret }}"
 
 - htpasswd:
-    path: {{ mktemp.stdout }}/prometheus.htpasswd
+    path: "{{ mktemp.stdout }}/prometheus.htpasswd"
     name: internal
     password: '{{ session_secret }}'
     crypt_scheme: ldap_sha1
