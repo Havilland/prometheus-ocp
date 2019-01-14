@@ -23,7 +23,7 @@
         namespace: '{{ current_namespace.metadata.name }}'
         definition:
           annotations:
-            serviceaccounts.openshift.io/oauth-redirectreference.prrimary: {"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"prometheus"}}
+            serviceaccounts.openshift.io/oauth-redirectreference.primary: {"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"prometheus"}}
 
     - name: "Prometheus Deployment: create clusterrolebinding"
       k8s:
@@ -68,7 +68,7 @@
             selector:
               prometheus: '{{ cluster_prometheus_namespace_serviceAccount }}'
 
-    - name: Create route for grafana
+    - name: Create route for prometheus
       k8s:
         verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
         state: present
