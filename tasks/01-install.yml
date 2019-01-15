@@ -134,11 +134,11 @@
             - args:
               - --kubelet-service=kube-system/kubelet
               - --logtostderr=true
-              - --config-reloader-image=quay.io/coreos/configmap-reload:v0.0.1
-              - --prometheus-config-reloader=quay.io/coreos/prometheus-config-reloader:{{ cluster_prometheus_operator_version }}
+              - --config-reloader-image={{ cluster_registry }}/openshift3/ose-configmap-reloader:{{ cluster_openshift_version }}
+              - --prometheus-config-reloader={{ cluster_registry }}/openshift3/ose-prometheus-config-reloader:{{ cluster_openshift_version }}
               - --crd-apigroup={{ cluster_prometheus_apiGroup }}
               - --disable-auto-user-group
-              image: quay.io/coreos/prometheus-operator:{{ cluster_prometheus_operator_version }}
+              image: '{{ cluster_registry }}/openshift3/ose-prometheus-operator:{{ cluster_openshift_version }}'
               name: '{{ cluster_prometheus_namespace }}-operator'
               ports:
               - containerPort: 8080

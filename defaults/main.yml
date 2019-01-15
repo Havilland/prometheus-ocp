@@ -1,9 +1,11 @@
 ---
 # defaults file for prometheus-ocp
+cluster_registry: registry.redhat.io # registry.access.redhat.com
+cluster_openshift_version: v3.11
 cluster_prometheus_namespace: app-prometheus
 cluster_prometheus_apiGroup: monitoring.example.com
 cluster_prometheus_operator_size: 1
-cluster_prometheus_operator_version: v0.25.0
+
 cluster_prometheus_operator_serviceAccount: app-prometheus
 cluster_prometheus_label: app-prometheus-operator
 cluster_prometheus_namespace_label: "app-monitor=monitor"
@@ -11,9 +13,6 @@ cluster_prometheus_namespace_serviceAccount: operated-prometheus
 cluster_prometheus_grafana_serviceAccount: custom-grafana
 cluster_prometheus_custom_label: "example-prometheus"
 cluster_prometheus_default_labelselector: "prometheus: monitoring"
-
-cluster_prometheus_grafana_image: 'registry.access.redhat.com/openshift3/grafana:v3.11'
-cluster_prometheus_oauth_image: 'registry.access.redhat.com/openshift3/oauth-proxy:v3.11'
 
 cluster_prometheus_grafana_oauth_port: 3000
 cluster_prometheus_grafana_port: 3001
