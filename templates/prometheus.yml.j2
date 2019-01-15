@@ -13,7 +13,7 @@ spec:
   serviceAccountName: {{ cluster_prometheus_namespace_serviceAccount }}
   serviceMonitorSelector:
     matchLabels:
-      team: frontend
+      {{ cluster_prometheus_default_labelselector }}
   secrets:
     - prometheus-tls
     - prometheus-proxy

@@ -1,0 +1,31 @@
+---
+- name: Create temp directory for doing work in
+  command: mktemp -d /tmp/prometheus-ocp-XXXXXX
+  register: mktemp
+  changed_when: False
+  check_mode: no
+
+- name: ensure python dependencies
+  pip:
+    name:
+      - openshift
+      - passlib
+
+- name: Check if cluster_prometheus is deployed
+  k8s_facts:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    api_version: v1
+    kind: Deployment
+    namespace: '{{ cluster_prometheus_namespace }}'
+    label_selectors:
+      - k8s-app = {{ cluster_prometheus_label }}
+  register: prometheus_operator
+  
+- name: Search for grafana wanted labels
+  k8s_facts:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    api_version: v1
+    kind: namespace
+    label_selectors:
+      -  "{{ cluster_prometheus_namespace_label }}" # search for namespaces with the specified label to deploy prometheus and grafana in there.
+  register: namespaces_prom

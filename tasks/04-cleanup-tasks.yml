@@ -1,0 +1,4 @@
+- name: clean up the temporary folder structure
+  file:
+    path: '{{ mktemp.stdout }}'
+    state: absent

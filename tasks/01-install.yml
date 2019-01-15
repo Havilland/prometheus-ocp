@@ -1,7 +1,7 @@
 ---
 - name: "Base Installation: create Namespace if not present"
   k8s:
-    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
     state: present
     name: '{{ cluster_prometheus_namespace }}'
     api_version: v1
@@ -9,7 +9,7 @@
 
 - name: "Base Installation: create clusterrole for prometheus operator"
   k8s:
-    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
     state: present
     definition:
       apiVersion: rbac.authorization.k8s.io/v1
@@ -81,7 +81,7 @@
 
 - name: "Base Installation: create service account for custom-prometheus-operator"
   k8s:
-    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
     state: present
     name: '{{ cluster_prometheus_operator_serviceAccount }}'
     api_version: v1
@@ -90,7 +90,7 @@
 
 - name: create clusterrolebinding
   k8s:
-    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
     state: present
     definition:
       apiVersion: rbac.authorization.k8s.io/v1
@@ -109,7 +109,7 @@
 
 - name: "Base Installation: deploy prometheus operator"
   k8s:
-    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
     state: present
     namespace: "{{ cluster_prometheus_namespace }}"
     definition:
@@ -159,7 +159,7 @@
 
 - name: "Base Installation: Create app-prometheus clusterrole"
   k8s:
-    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
     state: present
     definition:
       apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -197,7 +197,7 @@
 
 - name: "Base Installation: Create clusterrole for grafana"
   k8s:
-    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
     state: present
     definition:
       apiVersion: authorization.openshift.io/v1

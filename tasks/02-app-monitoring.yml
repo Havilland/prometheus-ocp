@@ -5,29 +5,33 @@
 
 - name: Check if Prometheus is already deployed
   k8s_facts:
-    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
-    api_version: monitoring.example.com/v1
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    api_version: "{{ cluster_prometheus_apiGroup }}/v1"
     kind: Prometheus
     namespace: '{{ current_namespace.metadata.name }}'
   register: prometheus_deployment
+
+- debug:
+    msg: '{{ prometheus_deployment }}'
 
 - name: Deploying Prometheus in namespace
   block:
     - name: "Prometheus Deployment: deploy service account"
       k8s:
-        verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
         state: present
         api_version: v1
-        kind: ServiceAccount
         name: '{{ cluster_prometheus_namespace_serviceAccount }}'
+        kind: ServiceAccount
         namespace: '{{ current_namespace.metadata.name }}'
         definition:
-          annotations:
-            serviceaccounts.openshift.io/oauth-redirectreference.primary: {"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"prometheus"}}
+          metadata:
+            annotations:
+               serviceaccounts.openshift.io/oauth-redirectreference.primary: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"prometheus"}}'
 
     - name: "Prometheus Deployment: create clusterrolebinding"
       k8s:
-        verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
         definition:
           apiVersion: rbac.authorization.k8s.io/v1beta1
           kind: ClusterRoleBinding
@@ -46,7 +50,7 @@
 
     - name: create service for prometheus
       k8s:
-        verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
         state: present
         definition:
           apiVersion: v1
@@ -70,7 +74,7 @@
 
     - name: Create route for prometheus
       k8s:
-        verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
         state: present
         definition:
           apiVersion: route.openshift.io/v1
@@ -95,7 +99,7 @@
 
     - name: Create prometheus session_secret
       k8s:
-        verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
         state: present
         definition:
           apiVersion: v1
@@ -114,7 +118,7 @@
 
     - name: Create prometheus htpasswd auth secret
       k8s:
-        verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
         state: present
         definition:
           apiVersion: v1
@@ -134,7 +138,7 @@
 
     - name: "Prometheus Deployment: create prometheus CRD deployment"
       k8s:
-        verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
         state: present
         src: "{{ mktemp.stdout }}/prometheus.yml"
   when: prometheus_deployment.resources[0] is not defined

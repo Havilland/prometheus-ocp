@@ -1,42 +1,20 @@
 ---
 # tasks file for prometheus-ocp
 
-# use k8s_facts to check if namespace is there > if not then start install
+- include: 00-config-tasks.yml
 
-- name: Create temp directory for doing work in
-  command: mktemp -d /tmp/prometheus-ocp-XXXXXX
-  register: mktemp
-  changed_when: False
-  check_mode: no
-
-- name: Check if cluster_prometheus is deployed
-  k8s_facts:
-    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
-    api_version: v1
-    kind: Deployment
-    namespace: '{{ cluster_prometheus_namespace }}'
-    label_selectors:
-      - k8s-app = {{ cluster_prometheus_label }}
-  register: prometheus_operator
-
-- include_tasks: install.yml
+- include_tasks: 01-install.yml
   when: prometheus_operator.resources | length == 0 
 
-- name: Search for grafana wanted labels
-  k8s_facts:
-    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
-    api_version: v1
-    kind: namespace
-    label_selectors:
-      -  "{{ cluster_prometheus_namespace_label }}" # search for namespaces with the specified label to deploy prometheus and grafana in there.
-  register: namespaces_prom
-
-- include_tasks: app-monitoring.yml
+- include_tasks: 02-app-monitoring.yml
   loop: "{{ namespaces_prom.resources|flatten(levels=1) }}"
   loop_control:
     loop_var: current_namespace
 
-- include_tasks: grafana.yml
+- include_tasks: 03-grafana.yml
   loop: "{{ namespaces_prom.resources|flatten(levels=1) }}"
   loop_control:
-    loop_var: current_namespace
+    loop_var: current_namespace 
+
+- include_tasks: 04-cleanup-tasks.yml
+  when: mktemp is defined and (mktemp.stdout | length > 0 )
