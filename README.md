@@ -62,8 +62,8 @@ For defaults see [`defaults/main.yaml`](defaults/main.yaml)
 * `cluster_prometheus_oauth_proxy_memory_limit`: 100Mi
 * `cluster_prometheus_oauth_proxy_cpu_limit`: 100m
 * `cluster_prometheus_grafana_storage_type`: What storage type should be used for grafana (none or pvc)
-* `k8s_auth_verify_ssl: true | false` : Whether or not to verify the API server's SSL certificates
 * `cluster_prometheus_default_labelselector:`: Default label selector to be used by the Prometheus Operator to discover Custom Resources such as ServiceMonitors
+* `k8s_auth_verify_ssl: true | false` : Whether or not to verify the API server's SSL certificates
 
 ## Usage
 
