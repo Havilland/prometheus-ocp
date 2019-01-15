@@ -1,7 +1,7 @@
 ---
 - name: Check if grafana is already deployed
   k8s_facts:
-    verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
     api_version: v1
     kind: Deployment
     namespace: '{{ current_namespace.metadata.name }}'
@@ -13,7 +13,7 @@
   block:
     - name: "Grafana Deployment: create grafana service account"
       k8s:
-        verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
         state: present
         api_version: v1
         name: '{{ cluster_prometheus_grafana_serviceAccount }}'
@@ -26,7 +26,7 @@
 
     - name: "Grafana Deployment: set clusterrolebinding for grafana service account"
       k8s:
-        verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
         state: present
         definition:
           apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -46,7 +46,7 @@
 
     - name: Create route for grafana
       k8s:
-        verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
         state: present
         definition:
           apiVersion: route.openshift.io/v1
@@ -68,7 +68,7 @@
 
     - name: create service for grafana
       k8s:
-        verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
         state: present
         definition:
           apiVersion: v1
@@ -94,7 +94,7 @@
 
     - name: Create grafana session_secret
       k8s:
-        verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
         state: present
         definition:
           apiVersion: v1
@@ -108,7 +108,7 @@
 
     - name: "Grafana Deployment: create grafana pvc"
       k8s:
-        verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
         state: present
         definition:
           apiVersion: v1
@@ -137,7 +137,7 @@
 
     - name: create grafana-config configmap
       k8s:
-        verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
         state: present
         definition:
           apiVersion: v1
@@ -150,7 +150,7 @@
 
     - name: Create grafana datasource secret
       k8s:
-        verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
         state: present
         definition:
           apiVersion: v1
@@ -163,7 +163,7 @@
 
     - name: "Grafana Deployment: create grafana deployment"
       k8s:
-        verify_ssl: "{{ lookup('env','K8S_AUTH_VERIFY_SSL') }}"
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
         state: present
         src: "{{ mktemp.stdout }}/grafana.yml"
   when: grafana_deployment.resources[0] is not defined
