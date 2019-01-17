@@ -1,21 +1,43 @@
-Role Name
-=========
+# Prometheus OCP
 
 This role deploys a customized prometheus-operator to work alongside the cluster-monitoring operator present in OpenShift >= v3.10
 
-Additionally it can be run periodically to deploy prometheus instances and corresponding grafana instances into projects with a 
-specified label
+Additionally it can be run periodically to deploy prometheus instances and corresponding grafana instances into projects with a specified label
 
-Requirements
-------------
+## Requirements
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+### General
 
-* openshift python module
-* ansible 2.7.x
+* OpenShift 3.10 or greater
+* Ansible 2.7.x
+* Python
+* Pip
 
-Role Variables
---------------
+### Mac OS
+
+On Mac OS hosts where Brew manages the Ansible install (and therefore, a Python install as a dependency), please ensure that Pip is installed in the correct location:
+
+```bash
+
+# ensure python is up to date
+brew install python
+brew unlink python
+brew link python
+
+# add pip to path (note versions may be different depending on the state of brew)
+export PATH=/usr/local/Cellar/python/3.7.2_1/Frameworks/Python.framework/Versions/3.7/bin:$PATH
+
+# install pip
+mkdir tmp
+cd tmp
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python3 get-pip.py
+
+# when ready, run playbook with 'correct' interpreter i.e. the one managed by brew
+ansible-playbook -i hosts.inv site-install.yml -e 'ansible_python_interpreter=python3'
+```
+
+## Role Variables
 
 For defaults see [`defaults/main.yaml`](defaults/main.yaml)
 
@@ -40,22 +62,40 @@ For defaults see [`defaults/main.yaml`](defaults/main.yaml)
 * `cluster_prometheus_oauth_proxy_memory_limit`: 100Mi
 * `cluster_prometheus_oauth_proxy_cpu_limit`: 100m
 * `cluster_prometheus_grafana_storage_type`: What storage type should be used for grafana (none or pvc)
+* `cluster_prometheus_default_labelselector:`: Default label selector to be used by the Prometheus Operator to discover Custom Resources such as ServiceMonitors
+* `k8s_auth_verify_ssl: true | false` : Whether or not to verify the API server's SSL certificates
 
-Example Playbook
-----------------
+## Usage
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+### Example Playbook
 
-    - hosts: servers
-      roles:
-         - { role: prometheus-ocp, cluster_prometheus_namespace: app-prometheus, cluster_prometheus_apiGroup: monitoring.example.com }
+```ansible
+  ---
+  - hosts: jumpbox
+    any_errors_fatal: true
+    gather_facts: false
+    roles:
+      - prometheus-ocp
+```
 
-License
--------
+### Example Inventory
+
+```ansible
+  [jumpbox]
+  localhost ansible_connection=local
+
+  [jumpbox:vars]
+  cluster_prometheus_namespace=monitoring-test
+  cluster_prometheus_apiGroup=test.monitoring.com
+  cluster_prometheus_namespace_serviceAccount=prometheus-test
+  cluster_prometheus_grafana_serviceAccount=grafana-test
+  cluster_prometheus_namespace_label="monitoring=true"
+```
+
+## License
 
 BSD
 
-Author Information
-------------------
+## Author Information
 
 Alexander Bartilla (alexander.bartilla@cloudwerkstatt.com)
