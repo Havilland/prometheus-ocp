@@ -20,7 +20,7 @@ spec:
       serviceAccountName: {{ cluster_prometheus_grafana_serviceAccount }}
       containers:
       - name: oauth-proxy
-        image: "{{ cluster_prometheus_oauth_image }}"
+        image: "{{ cluster_registry }}/openshift3/oauth-proxy:{{ cluster_openshift_version }}"
         imagePullPolicy: IfNotPresent
         resources:
           requests:
@@ -63,7 +63,7 @@ spec:
           name: grafana-proxy-secrets
 
       - name: grafana
-        image: "{{ cluster_prometheus_grafana_image }}"
+        image: "{{ cluster_registry }}/openshift3/grafana:{{ cluster_openshift_version }}"
         imagePullPolicy: IfNotPresent
         resources:
           requests:

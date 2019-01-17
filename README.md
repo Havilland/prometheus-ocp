@@ -41,6 +41,8 @@ ansible-playbook -i hosts.inv site-install.yml -e 'ansible_python_interpreter=py
 
 For defaults see [`defaults/main.yaml`](defaults/main.yaml)
 
+* `cluster_registry`: Image source
+* `cluster_openshift_version`: The version of OpenShift we're deploying onto. Ensures we pull the right image versions
 * `cluster_prometheus_namespace`: Namespace where to deploy prometheus operator
 * `cluster_prometheus_apiGroup`: apiGroup for the prometheus-operator (don't use monitoring.coreos.com if cluster-monitoring-operator is present)
 * `cluster_prometheus_operator_size`: 1
@@ -49,8 +51,6 @@ For defaults see [`defaults/main.yaml`](defaults/main.yaml)
 * `cluster_prometheus_namespace_label`: Namespace label that determines if prometheus and grafana will be deployed
 * `cluster_prometheus_namespace_serviceAccount`: prometheus service account name
 * `cluster_prometheus_grafana_serviceAccount`: grafana service account name
-* `cluster_prometheus_grafana_image`: Image that will be used for grafana
-* `cluster_prometheus_oauth_image`: Image that will be used for oauth-proxy
 * `cluster_prometheus_grafana_oauth_port`: oauth proxy port
 * `cluster_prometheus_grafana_port`: grafana port
 * `cluster_prometheus_grafana_memory_requests`: 100Mi
