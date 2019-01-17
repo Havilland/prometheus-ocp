@@ -67,9 +67,23 @@ For defaults see [`defaults/main.yaml`](defaults/main.yaml)
 
 ## Usage
 
+### Docker
+
+The dockerfile will build a image with the role inside. You can customize the variables in the playbook.yml
+
+The container needs your .kube config with user logged in that has privileges of cluster-admin to deploy all necessary resources.
+
+To run the role it has to be started as follows:
+
+```bash
+docker run --network="host" --dns="$YOUR_DNS" -v /home/$USER/.kube:/root/.kube prometheus-ocp:1
+
+```
+
 ### Example Playbook
 
-```ansible
+```yaml
+
   ---
   - hosts: jumpbox
     any_errors_fatal: true

@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  connection: local
+
+  vars:
+    cluster_prometheus_namespace: monitoring-test
+    cluster_prometheus_apiGroup: test.monitoring.com
+    cluster_prometheus_namespace_serviceAccount: prometheus-test
+    cluster_prometheus_grafana_serviceAccount: grafana-test
+    cluster_prometheus_namespace_label: "monitoring=true"
+
+  roles:
+    - prometheus-ocp
