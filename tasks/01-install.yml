@@ -220,3 +220,97 @@
             - subjectaccessreviews
           verbs:
             - create
+
+- name: "Deploying Thanos"
+  block:
+    - name: "Deploy Minio statefulset service"
+      k8s:
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: minio
+            labels:
+              app: minio
+          spec:
+            clusterIP: None
+            ports:
+              - port: 9000
+                name: minio
+            selector:
+              app: minio
+
+    - name: "Deploy minio-service"
+      k8s:
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: minio-service
+          spec:
+            type: LoadBalancer
+            ports:
+              - port: 9000
+                targetPort: 9000
+                protocol: TCP
+            selector:
+              app: minio
+
+    - name: "Create thanos-peers headless service"
+      k8s:
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: thanos-peers
+          spec:
+            type: ClusterIP
+            clusterIP: None
+            ports:
+              - name: cluster
+                port: 10900
+                targetPort: cluster
+            selector:
+              # Useful endpoint for gathering all thanos components for common gossip cluster.
+              thanos-peer: "true"
+
+    - name: "Create thanos-query headless service"
+      k8s:
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            labels:
+              app: thanos-query
+            name: thanos-query
+          spec:
+            externalTrafficPolicy: Cluster
+            ports:
+              - port: 9090
+                protocol: TCP
+                targetPort: http
+                name: http-query
+            selector:
+              app: thanos-query
+            sessionAffinity: None
+            type: NodePort
+    - name: "Create yml files from templates"
+      template:
+        src: "{{ item }}.j2"
+        dest: "{{ mktemp.stdout }}/{{ item }}"
+      loop:
+        - "bucket-config.yml"
+        - "minio-deployment.yml"
+        - "thanos-query.yml"
+        - "thanos-store.yml"
+
+
+  when: "{{ cluster_thanos_aggregation == 'yes' }}"
