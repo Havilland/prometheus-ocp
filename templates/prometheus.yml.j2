@@ -18,6 +18,7 @@ spec:
     - prometheus-tls
     - prometheus-proxy
     - prometheus-htpasswd
+    - thanos-bucket-config
   listenLocal: true
   containers:
     - args:
@@ -51,3 +52,29 @@ spec:
           name: secret-prometheus-proxy
         - mountPath: /etc/proxy/htpasswd
           name: secret-prometheus-htpasswd
+{% if cluster_thanos_aggregation is defined and cluster_thanos_aggregation == 'yes' %}
+    - args:
+        - sidecar
+        - '--prometheus.url=http://localhost:9090'
+        - '--tsdb.path=/prometheus'
+        - '--cluster.peers=thanos-peers.{{ cluster_prometheus_namespace }}.svc:10900'
+        - '--objstore.config-file=/var/run/thanos-config/thanos.yml'
+      image: '{{ cluster_thanos_image }}:{{ cluster_thanos_image_version }}'
+      imagePullPolicy: IfNotPresent
+      name: thanos-sidecar
+      ports:
+        - containerPort: 10902
+          name: http
+          protocol: TCP
+        - containerPort: 10901
+          name: grpc
+          protocol: TCP
+        - containerPort: 10900
+          name: cluster
+          protocol: TCP
+      volumeMounts:
+        - mountPath: /prometheus
+          name: prometheus-{{ cluster_prometheus_namespace_serviceAccount }}-db
+        - mountPath: /var/run/thanos-config
+          name: secret-thanos-bucket-config
+{% endif %}

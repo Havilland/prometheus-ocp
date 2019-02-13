@@ -29,5 +29,20 @@ cluster_prometheus_oauth_proxy_cpu_limit: 100m
 
 cluster_prometheus_grafana_storage_type: none
 
+cluster_thanos_aggregation: yes
+
+cluster_thanos_store_bucket: minio
+cluster_thanos_store_endpoint: minio-service.minio.svc
+cluster_thanos_store_insecure: true
+cluster_thanos_store_access_key: foobar
+cluster_thanos_store_secret_key: foobar1234
+cluster_thanos_store_signature_version2: true
+cluster_thanos_store_minio_size: 20Gi
+
+cluster_thanos_image: improbable/thanos
+cluster_thanos_image_version: v0.2.1
+cluster_thanos_minio_image: minio/minio
+cluster_thanos_minio_image_version: latest
+
 # k8s client
 k8s_auth_verify_ssl: false
