@@ -6,6 +6,9 @@
 - include_tasks: 01-install.yml
   when: prometheus_operator.resources | length == 0 
 
+- include_tasks: 05-thanos.yml
+  when: "{{ cluster_thanos_aggregation == 'yes' }}"
+
 - include_tasks: 02-app-monitoring.yml
   loop: "{{ namespaces_prom.resources|flatten(levels=1) }}"
   loop_control:
