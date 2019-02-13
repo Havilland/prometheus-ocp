@@ -125,6 +125,7 @@
             resources:
               requests:
                 storage: 1Gi
+      when: cluster_prometheus_grafana_storage_type == 'pvc'
 
     - name: "Grafana Deployment: template deployment and grafana-config"
       template:
