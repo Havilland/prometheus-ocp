@@ -2,10 +2,10 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  labels:
-    app: grafana
   name: grafana
   namespace: {{ current_namespace.metadata.name }}
+  labels:
+    app: grafana
 spec:
   replicas: 1
   selector:
@@ -20,6 +20,22 @@ spec:
       serviceAccountName: {{ cluster_prometheus_grafana_serviceAccount }}
       containers:
       - name: oauth-proxy
+        args:
+          - '-https-address=:{{ cluster_prometheus_grafana_oauth_port }}'
+          - '-http-address='
+          - '-email-domain=*'
+          - '-client-id=system:serviceaccount:{{ current_namespace.metadata.name }}:{{ cluster_prometheus_grafana_serviceAccount }}'
+          - '-upstream=http://localhost:{{ cluster_prometheus_grafana_port }}'
+          - '-provider=openshift'
+          - '-openshift-sar={"namespace": "{{ current_namespace.metadata.name }}", "verb": "list", "resource": "services"}'
+          - '-tls-cert=/etc/tls/private/tls.crt'
+          - '-tls-key=/etc/tls/private/tls.key'
+          - '-client-secret-file=/var/run/secrets/kubernetes.io/serviceaccount/token'
+          - '-cookie-secret-file=/etc/proxy/secrets/session_secret'
+          - '-openshift-service-account=grafana'
+          - '-openshift-ca=/etc/pki/tls/cert.pem'
+          - '-openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt'
+          - '-skip-auth-regex=^/metrics,/api/datasources,/api/dashboards'
         image: "{{ cluster_registry }}/openshift3/oauth-proxy:{{ cluster_openshift_version }}"
         imagePullPolicy: IfNotPresent
         resources:
@@ -40,22 +56,6 @@ spec:
         ports:
         - containerPort: {{ cluster_prometheus_grafana_oauth_port }}
           name: https
-        args:
-        - -https-address=:{{ cluster_prometheus_grafana_oauth_port }}
-        - -http-address=
-        - -email-domain=*
-        - -client-id=system:serviceaccount:{{ current_namespace.metadata.name }}:{{ cluster_prometheus_grafana_serviceAccount }}
-        - -upstream=http://localhost:{{ cluster_prometheus_grafana_port }}
-        - -provider=openshift
-        - '-openshift-sar={"namespace": "{{ current_namespace.metadata.name }}", "verb": "list", "resource": "services"}'
-        - -tls-cert=/etc/tls/private/tls.crt
-        - -tls-key=/etc/tls/private/tls.key
-        - -client-secret-file=/var/run/secrets/kubernetes.io/serviceaccount/token
-        - -cookie-secret-file=/etc/proxy/secrets/session_secret
-        - '-openshift-service-account=grafana'
-        - '-openshift-ca=/etc/pki/tls/cert.pem'
-        - '-openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt'
-        - -skip-auth-regex=^/metrics,/api/datasources,/api/dashboards
         volumeMounts:
         - mountPath: /etc/tls/private
           name: grafana-tls-secret
@@ -63,6 +63,8 @@ spec:
           name: grafana-proxy-secrets
 
       - name: grafana
+        args:
+          - '-config=/etc/grafana/grafana.ini'name: grafana
         image: "{{ cluster_registry }}/openshift3/grafana:{{ cluster_openshift_version }}"
         imagePullPolicy: IfNotPresent
         resources:
@@ -94,8 +96,6 @@ spec:
           name: grafana-proxy-secrets
         - name: grafana-datasources
           mountPath: /etc/grafana/provisioning/datasources
-        args:
-          - '-config=/etc/grafana/grafana.ini'
       volumes:
       - name: grafana-config
         configMap:

@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -22,13 +23,12 @@ spec:
     spec:
       containers:
       - name: thanos-query
-        # Always use explicit image tags (release or master-<date>-sha) instead of ambigous `latest` or `master`.
         image: {{ cluster_thanos_image }}:{{ cluster_thanos_image_version }}
         args:
-        - "query"
-        - "--log.level=debug"
-        - "--cluster.peers=thanos-peers.{{ cluster_prometheus_namespace }}.svc.cluster.local:10900"
-        - "--query.replica-label=replica"
+        - 'query'
+        - '--log.level=debug'
+        - '--cluster.peers=thanos-peers.{{ cluster_prometheus_namespace }}.svc.cluster.local:10900'
+        - '--query.replica-label=replica'
         ports:
         - name: http
           containerPort: 10902

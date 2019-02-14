@@ -1,7 +1,9 @@
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: thanos-store
+  namespace: {{ cluster_prometheus_namespace }}
 spec:
   serviceName: "thanos-store"
   replicas: 1
@@ -20,15 +22,13 @@ spec:
     spec:
       containers:
       - name: thanos-store
-        # Always use explicit image tags (release or master-<date>-sha) instead of ambigous `latest` or `master`.
-        image: improbable/thanos:v0.2.1
+        image: {{ cluster_thanos_image }}:{{ cluster_thanos_image_version }}
         args:
-        - "store"
-        - "--log.level=debug"
-        - "--data-dir=/var/thanos/store"
-        - "--cluster.peers=thanos-peers.{{ cluster_prometheus_namespace }}.svc.cluster.local:10900"
-        # NOTE: This is required to be added in GCS prior startup of this.
-        - "--objstore.config-file=<bucket.config-yaml>"
+        - 'store'
+        - '--log.level=debug'
+        - '--data-dir=/var/thanos/store'
+        - '--cluster.peers=thanos-peers.{{ cluster_prometheus_namespace }}.svc.cluster.local:10900'
+        - '--objstore.config-file=/var/run/thanos-config/thanos.yml'
         ports:
         - name: http
           containerPort: 10902
@@ -37,9 +37,6 @@ spec:
         - name: cluster
           containerPort: 10900
         volumeMounts:
-        - mountPath: /creds/
-          name: gcs-credentials
-          readOnly: true
         - name: data
           mountPath: /var/thanos/store
       volumes:

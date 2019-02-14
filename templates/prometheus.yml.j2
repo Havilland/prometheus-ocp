@@ -21,26 +21,25 @@ spec:
     - thanos-bucket-config
   listenLocal: true
   containers:
-    - args:
+    - name: prometheus-proxy
+      args:
         - '-provider=openshift'
         - '-https-address=:9091'
         - '-http-address='
         - '-email-domain=*'
         - '-upstream=http://localhost:9090'
         - '-htpasswd-file=/etc/proxy/htpasswd/auth'
-        - -client-id=system:serviceaccount:{{ current_namespace.metadata.name }}:{{ cluster_prometheus_namespace_serviceAccount }}
+        - '-client-id=system:serviceaccount:{{ current_namespace.metadata.name }}:{{ cluster_prometheus_namespace_serviceAccount }}'
         - '-openshift-service-account={{ cluster_prometheus_namespace_serviceAccount }}'
         - '-openshift-sar={"namespace": "{{ current_namespace.metadata.name }}", "verb": "list", "resource": "services"}'
         - '-tls-cert=/etc/tls/private/tls.crt'
         - '-tls-key=/etc/tls/private/tls.key'
-        - >-
-          -client-secret-file=/var/run/secrets/kubernetes.io/serviceaccount/token
+        - '-client-secret-file=/var/run/secrets/kubernetes.io/serviceaccount/token'
         - '-cookie-secret-file=/etc/proxy/secrets/session_secret'
         - '-openshift-ca=/etc/pki/tls/cert.pem'
         - '-openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt'
         - '-skip-auth-regex=^/metrics'
       image: '{{ cluster_registry }}/openshift3/oauth-proxy:{{ cluster_openshift_version }}'
-      name: prometheus-proxy
       ports:
         - containerPort: 9091
           name: web
@@ -53,15 +52,15 @@ spec:
         - mountPath: /etc/proxy/htpasswd
           name: secret-prometheus-htpasswd
 {% if cluster_thanos_aggregation is defined and cluster_thanos_aggregation == 'yes' %}
-    - args:
-        - sidecar
+    - name: thanos-sidecar
+      args:
+        - 'sidecar'
         - '--prometheus.url=http://localhost:9090'
         - '--tsdb.path=/prometheus'
         - '--cluster.peers=thanos-peers.{{ cluster_prometheus_namespace }}.svc:10900'
         - '--objstore.config-file=/var/run/thanos-config/thanos.yml'
       image: '{{ cluster_thanos_image }}:{{ cluster_thanos_image_version }}'
       imagePullPolicy: IfNotPresent
-      name: thanos-sidecar
       ports:
         - containerPort: 10902
           name: http

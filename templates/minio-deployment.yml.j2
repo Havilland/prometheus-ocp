@@ -1,21 +1,9 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: minio
-  labels:
-    app: minio
-spec:
-  clusterIP: None
-  ports:
-    - port: 9000
-      name: minio
-  selector:
-    app: minio
 ---
 apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
   name: minio
+  namespace: {{ cluster_prometheus_namespace }}
 spec:
   serviceName: minio
   replicas: 4
@@ -25,26 +13,21 @@ spec:
         app: minio
     spec:
       containers:
-      - name: minio
+      -  name: minio
+         args:
+          - server
+          - http://minio-{0...3}.minio.{{ cluster_prometheus_namespace }}.svc.cluster.local/data
         env:
         - name: MINIO_ACCESS_KEY
           value: "{{ cluster_thanos_store_access_key }}"
         - name: MINIO_SECRET_KEY
           value: "{{ cluster_thanos_store_secret_key }}"
         image: {{ cluster_thanos_minio_image }}:{{ cluster_thanos_minio_image_version }}
-        args:
-        - server
-        # the second minio here has to be the projectname where minio resides
-        - http://minio-{0...3}.minio.minio.svc.cluster.local/data
         ports:
         - containerPort: 9000
-        # These volume mounts are persistent. Each pod in the PetSet
-        # gets a volume mounted based on this field.
         volumeMounts:
         - name: data
           mountPath: /data
-  # These are converted to volume claims by the controller
-  # and mounted at the paths mentioned above.
   volumeClaimTemplates:
   - metadata:
       name: data
@@ -56,16 +39,3 @@ spec:
           storage: {{ cluster_thanos_store_minio_size }}
       # Uncomment and add storageClass specific to your requirements below. Read more https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class-1
       #storageClassName:
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: minio-service
-spec:
-  type: LoadBalancer
-  ports:
-    - port: 9000
-      targetPort: 9000
-      protocol: TCP
-  selector:
-    app: minio

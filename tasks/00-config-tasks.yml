@@ -20,7 +20,7 @@
     label_selectors:
       - k8s-app = {{ cluster_prometheus_label }}
   register: prometheus_operator
-  
+
 - name: Search for grafana wanted labels
   k8s_facts:
     verify_ssl: "{{ k8s_auth_verify_ssl }}"
