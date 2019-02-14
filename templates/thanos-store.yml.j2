@@ -39,9 +39,12 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /var/thanos/store
+        - name: bucket-config
+          mountPath: /var/run/thanos-config
+          readOnly: true
       volumes:
       - name: data
         emptyDir: {}
       - name: bucket-config
-        configMap:
-          name: bucket-config
+        secret:
+          secretName: bucket-config

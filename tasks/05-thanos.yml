@@ -77,6 +77,22 @@
         selector:
           app: thanos-query
 
+- name: "Create route to minio-service"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Route
+      metadata:
+        name: minio-service
+        labels:
+          route: minio-service
+      spec:
+        to:
+          kind: Service
+          name: minio-service
+
 - name: "Create yml files from templates"
   template:
     src: "{{ item }}.j2"
@@ -96,9 +112,34 @@
 - name: "Wait 60 seconds for minio deployment"
   pause: seconds=60
 
-#- name: "Configure bucket in minio" # TODO
+- name:
+  k8s_facts:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    kind: Route
+    namespace: '{{ cluster_prometheus_namespace }}'
+    label_selectors:
+      - route = minio-service
+  register: minio_route
 
-#- name: "Create configMap with bucket config" # TODO
+- name: "Configure minio client"
+  command: /root/mc config host add minio http://{{ minio_route | json_query('resources[*].spec.host') }} {{ cluster_thanos_store_access_key }} {{ cluster_thanos_store_access_key }}
+
+- name: "Create bucket"
+  command: /root/mc mb minio/{{ cluster_thanos_store_bucket }}
+
+- name: "Create bucket-config secret"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name:
+        namespace: '{{ cluster_prometheus_namespace }}'
+      stringData:
+        thanos.yml: "{{ lookup('file', '{{ mktemp.stdout }}/bucket-config.yml') }}"
 
 - name: "Deploy thanos-store statefulset"
   k8s:
@@ -112,4 +153,3 @@
     state: present
     src: "{{ mktemp.stdout }}/thanos-query.yml"
 
-# TODO add grafana with thanos-query as datasource
