@@ -2,6 +2,7 @@
 - name: print debug var of namespace
   debug:
     var: current_namespace
+  when: playbook_debug
 
 - name: Check if Prometheus is already deployed
   k8s_facts:
@@ -13,6 +14,7 @@
 
 - debug:
     msg: '{{ prometheus_deployment }}'
+  when: playbook_debug
 
 - name: Deploying Prometheus in namespace
   block:

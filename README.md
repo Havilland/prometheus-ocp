@@ -1,6 +1,6 @@
 # Prometheus OCP
 
-This role deploys a customized prometheus-operator to work alongside the cluster-monitoring operator present in OpenShift >= v3.10
+This role deploys a customized prometheus-operator to work alongside the cluster-monitoring operator present in OpenShift v3.11
 
 It can also deploy thanos to aggregate metrics from all prometheus instances that have been deployed by this role. 
 Thanos will use minio as object storage. 
