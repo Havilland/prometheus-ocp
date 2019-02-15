@@ -14,10 +14,10 @@
   loop_control:
     loop_var: current_namespace
 
-- include_tasks: 03-grafana.yml
-  loop: "{{ namespaces_prom.resources|flatten(levels=1) }}"
-  loop_control:
-    loop_var: current_namespace
+#- include_tasks: 03-grafana.yml
+#  loop: "{{ namespaces_prom.resources|flatten(levels=1) }}"
+#  loop_control:
+#    loop_var: current_namespace
 
 - include_tasks: 04-cleanup-tasks.yml
   when: mktemp is defined and (mktemp.stdout | length > 0 )

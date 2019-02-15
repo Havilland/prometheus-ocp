@@ -51,7 +51,7 @@ spec:
           name: secret-prometheus-proxy
         - mountPath: /etc/proxy/htpasswd
           name: secret-prometheus-htpasswd
-{% if cluster_thanos_aggregation is defined and cluster_thanos_aggregation == 'yes' %}
+{% if cluster_thanos_aggregation %}
     - name: thanos-sidecar
       args:
         - 'sidecar'
