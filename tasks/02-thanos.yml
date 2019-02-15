@@ -81,6 +81,23 @@
         selector:
           app: thanos-query
 
+- name: "Create route to thanos-query"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Route
+      metadata:
+        name: thanos-query
+        namespace: '{{ cluster_prometheus_namespace }}'
+        labels:
+          route: thanos-query
+      spec:
+        to:
+          kind: Service
+          name: thanos-query
+
 - name: "Create route to minio-service"
   k8s:
     verify_ssl: "{{ k8s_auth_verify_ssl }}"
