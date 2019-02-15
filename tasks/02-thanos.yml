@@ -133,9 +133,10 @@
     src: "{{ mktemp.stdout }}/minio-deployment.yml"
   register: minio_deploy
 
-- name: "Wait 60 seconds for minio deployment"
-  pause: seconds=120
-  when: minio_deploy.changed
+- name: "Wait 120 seconds for minio deployment"
+  pause:
+    seconds: 120
+  when: minio_deploy.changed and cluster_thanos_minio_distributed
 
 - name: "Get minio route"
   k8s_facts:
