@@ -1,0 +1,50 @@
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: thanos-store
+  namespace: {{ cluster_prometheus_namespace }}
+spec:
+  serviceName: "thanos-store"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: thanos
+      thanos-peer: "true"
+  template:
+    metadata:
+      labels:
+        app: thanos
+        thanos-peer: "true"
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "10902"
+    spec:
+      containers:
+      - name: thanos-store
+        image: {{ cluster_thanos_image }}:{{ cluster_thanos_image_version }}
+        args:
+        - 'store'
+        - '--log.level=debug'
+        - '--data-dir=/var/thanos/store'
+        - '--cluster.peers=thanos-peers.{{ cluster_prometheus_namespace }}.svc.cluster.local:10900'
+        - '--objstore.config-file=/var/run/thanos-config/thanos.yml'
+        ports:
+        - name: http
+          containerPort: 10902
+        - name: grpc
+          containerPort: 10901
+        - name: cluster
+          containerPort: 10900
+        volumeMounts:
+        - name: data
+          mountPath: /var/thanos/store
+        - name: bucket-config
+          mountPath: /var/run/thanos-config
+          readOnly: true
+      volumes:
+      - name: data
+        emptyDir: {}
+      - name: bucket-config
+        secret:
+          secretName: bucket-config

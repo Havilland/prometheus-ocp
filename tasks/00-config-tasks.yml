@@ -10,6 +10,7 @@
     name:
       - openshift
       - passlib
+      - jmespath
 
 - name: Check if cluster_prometheus is deployed
   k8s_facts:
@@ -18,9 +19,9 @@
     kind: Deployment
     namespace: '{{ cluster_prometheus_namespace }}'
     label_selectors:
-      - k8s-app = {{ cluster_prometheus_label }}
+      - k8s-app = {{ cluster_prometheus_namespace }}-operator
   register: prometheus_operator
-  
+
 - name: Search for grafana wanted labels
   k8s_facts:
     verify_ssl: "{{ k8s_auth_verify_ssl }}"
@@ -29,3 +30,11 @@
     label_selectors:
       -  "{{ cluster_prometheus_namespace_label }}" # search for namespaces with the specified label to deploy prometheus and grafana in there.
   register: namespaces_prom
+
+- name: Debugging vars
+  block:
+
+    - debug:
+        msg: "{{ prometheus_operator }}"
+
+  when: playbook_debug

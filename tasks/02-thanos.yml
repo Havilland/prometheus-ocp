@@ -1,0 +1,192 @@
+---
+- name: "Deploy Minio statefulset service"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: minio
+        namespace: '{{ cluster_prometheus_namespace }}'
+        labels:
+          app: minio
+      spec:
+        clusterIP: None
+        ports:
+          - port: 9000
+            name: minio
+        selector:
+          app: minio
+  when: cluster_thanos_minio_distributed
+
+- name: "Deploy minio-service"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: minio-service
+        namespace: '{{ cluster_prometheus_namespace }}'
+      spec:
+        type: LoadBalancer
+        ports:
+          - port: 9000
+            targetPort: 9000
+            protocol: TCP
+        selector:
+          app: minio
+
+- name: "Create thanos-peers headless service"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: thanos-peers
+        namespace: '{{ cluster_prometheus_namespace }}'
+      spec:
+        type: ClusterIP
+        clusterIP: None
+        ports:
+          - name: cluster
+            port: 10900
+            targetPort: cluster
+        selector:
+          thanos-peer: "true"
+
+- name: "Create thanos-query headless service"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: thanos-query
+        namespace: '{{ cluster_prometheus_namespace }}'
+        labels:
+          app: thanos-query
+      spec:
+        type: NodePort
+        externalTrafficPolicy: Cluster
+        ports:
+          - name: http-query
+            port: 9090
+            protocol: TCP
+            targetPort: http
+        selector:
+          app: thanos-query
+
+- name: "Create route to thanos-query"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Route
+      metadata:
+        name: thanos-query
+        namespace: '{{ cluster_prometheus_namespace }}'
+        labels:
+          route: thanos-query
+      spec:
+        to:
+          kind: Service
+          name: thanos-query
+
+- name: "Create route to minio-service"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Route
+      metadata:
+        name: minio-service
+        namespace: '{{ cluster_prometheus_namespace }}'
+        labels:
+          route: minio-service
+      spec:
+        to:
+          kind: Service
+          name: minio-service
+
+- name: "Create yml files from templates"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ mktemp.stdout }}/{{ item }}"
+  loop:
+    - "bucket-config.yml"
+    - "minio-deployment.yml"
+    - "thanos-query.yml"
+    - "thanos-store.yml"
+
+- name: "Deploy minio"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    src: "{{ mktemp.stdout }}/minio-deployment.yml"
+  register: minio_deploy
+
+- name: "Wait 120 seconds for minio deployment"
+  pause:
+    seconds: 120
+  when: minio_deploy.changed and cluster_thanos_minio_distributed
+
+- name: "Get minio route"
+  k8s_facts:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    api_version: v1
+    kind: Route
+    namespace: '{{ cluster_prometheus_namespace }}'
+    label_selectors:
+      - route = minio-service
+  register: minio_route
+
+- name: "Configure minio client"
+  command: /root/mc config host add minio http://{{ minio_route | json_query('resources[*].spec.host') | join('') }} {{ cluster_thanos_store_access_key }} {{ cluster_thanos_store_secret_key }}
+  register: task_result
+  until: task_result.rc == 0
+  retries: 10
+  delay: 10
+  ignore_errors: yes
+
+- name: "Check if bucket exists"
+  command: /root/mc ls minio/{{ cluster_thanos_store_bucket }}
+  ignore_errors: yes
+  register: bucket_result
+
+- name: "Create bucket"
+  command: /root/mc mb minio/{{ cluster_thanos_store_bucket }}
+  when: bucket_result.rc != 0
+
+- name: "Create bucket-config secret"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: bucket-config
+        namespace: '{{ cluster_prometheus_namespace }}'
+      stringData:
+        thanos.yml: "{{ lookup('file', '{{ mktemp.stdout }}/bucket-config.yml') }}"
+
+- name: "Deploy thanos-store statefulset"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    src: "{{ mktemp.stdout }}/thanos-store.yml"
+
+- name: "Deploy thanos-query"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    src: "{{ mktemp.stdout }}/thanos-query.yml"
+

@@ -1,6 +1,10 @@
 # Prometheus OCP
 
-This role deploys a customized prometheus-operator to work alongside the cluster-monitoring operator present in OpenShift >= v3.10
+This role deploys a customized prometheus-operator to work alongside the cluster-monitoring operator present in OpenShift v3.11
+
+It can also deploy thanos to aggregate metrics from all prometheus instances that have been deployed by this role. 
+Thanos will use minio as object storage. 
+If you want to deploy Thanos 4 persistent volumes have to be available for the S3 object storage that will be used by thanos.
 
 Additionally it can be run periodically to deploy prometheus instances and corresponding grafana instances into projects with a specified label
 
@@ -64,6 +68,15 @@ For defaults see [`defaults/main.yaml`](defaults/main.yaml)
 * `cluster_prometheus_grafana_storage_type`: What storage type should be used for grafana (none or pvc)
 * `cluster_prometheus_default_labelselector:`: Default label selector to be used by the Prometheus Operator to discover Custom Resources such as ServiceMonitors
 * `k8s_auth_verify_ssl: true | false` : Whether or not to verify the API server's SSL certificates
+* `cluster_thanos_aggregation: yes`: Whether to deploy thanos or not
+* `cluster_thanos_store_bucket: data`: Name of the object storage bucket to be used
+* `cluster_thanos_store_access_key: foobar`: Name of the access_key to connect to object storage
+* `cluster_thanos_store_secret_key: foobar123`: Secret key to access object storage
+* `cluster_thanos_store_minio_size: 20Gi`: Size of the persistent volumes to be used to back the object storage
+* `cluster_thanos_image: improbable/thanos`
+* `cluster_thanos_image_version: v0.2.1`
+* `cluster_thanos_minio_image: minio/minio`
+* `cluster_thanos_minio_image_version: latest`
 
 ## Usage
 

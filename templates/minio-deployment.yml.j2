@@ -1,0 +1,95 @@
+{% if cluster_thanos_minio_distributed %}
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: minio
+  namespace: {{ cluster_prometheus_namespace }}
+spec:
+  serviceName: minio
+  replicas: 4
+  template:
+    metadata:
+      labels:
+        app: minio
+    spec:
+      containers:
+      - name: minio
+        args:
+          - server
+          - http://minio-{0...3}.minio.{{ cluster_prometheus_namespace }}.svc.cluster.local/data
+        env:
+        - name: MINIO_ACCESS_KEY
+          value: "{{ cluster_thanos_store_access_key }}"
+        - name: MINIO_SECRET_KEY
+          value: "{{ cluster_thanos_store_secret_key }}"
+        image: {{ cluster_thanos_minio_image }}:{{ cluster_thanos_minio_image_version }}
+        ports:
+        - containerPort: 9000
+        volumeMounts:
+        - name: data
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: {{ cluster_thanos_store_minio_size }}
+      # Uncomment and add storageClass specific to your requirements below. Read more https://kubernetes.io/docs/concepts/storage/persistent-volumes/#class-1
+      #storageClassName:
+{% else %}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minio-pv-claim
+  namespace: {{ cluster_prometheus_namespace }}
+  labels:
+    app: minio-storage-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ cluster_thanos_store_minio_size }}
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: minio
+  namespace: {{ cluster_prometheus_namespace }}
+  labels:
+    app: minio
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      name: minio
+      labels:
+        app: minio
+    spec:
+      containers:
+      - name: minio
+        args:
+          - server
+          - /storage
+        image: {{ cluster_thanos_minio_image }}:{{ cluster_thanos_minio_image_version }}
+        env:
+        - name: MINIO_ACCESS_KEY
+          value: "{{ cluster_thanos_store_access_key }}"
+        - name: MINIO_SECRET_KEY
+          value: "{{ cluster_thanos_store_secret_key }}"
+        ports:
+        - containerPort: 9000
+        volumeMounts:
+        - name: storage
+          mountPath: "/storage"
+      volumes:
+      - name: storage
+        persistentVolumeClaim:
+          claimName: minio-pv-claim
+{% endif %}

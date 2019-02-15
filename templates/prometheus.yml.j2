@@ -18,28 +18,29 @@ spec:
     - prometheus-tls
     - prometheus-proxy
     - prometheus-htpasswd
+    - thanos-bucket-config
+  baseImage: {{ cluster_registry }}/openshift3/prometheus
   listenLocal: true
   containers:
-    - args:
+    - name: prometheus-proxy
+      args:
         - '-provider=openshift'
         - '-https-address=:9091'
         - '-http-address='
         - '-email-domain=*'
         - '-upstream=http://localhost:9090'
         - '-htpasswd-file=/etc/proxy/htpasswd/auth'
-        - -client-id=system:serviceaccount:{{ current_namespace.metadata.name }}:{{ cluster_prometheus_namespace_serviceAccount }}
+        - '-client-id=system:serviceaccount:{{ current_namespace.metadata.name }}:{{ cluster_prometheus_namespace_serviceAccount }}'
         - '-openshift-service-account={{ cluster_prometheus_namespace_serviceAccount }}'
         - '-openshift-sar={"namespace": "{{ current_namespace.metadata.name }}", "verb": "list", "resource": "services"}'
         - '-tls-cert=/etc/tls/private/tls.crt'
         - '-tls-key=/etc/tls/private/tls.key'
-        - >-
-          -client-secret-file=/var/run/secrets/kubernetes.io/serviceaccount/token
+        - '-client-secret-file=/var/run/secrets/kubernetes.io/serviceaccount/token'
         - '-cookie-secret-file=/etc/proxy/secrets/session_secret'
         - '-openshift-ca=/etc/pki/tls/cert.pem'
         - '-openshift-ca=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt'
         - '-skip-auth-regex=^/metrics'
       image: '{{ cluster_registry }}/openshift3/oauth-proxy:{{ cluster_openshift_version }}'
-      name: prometheus-proxy
       ports:
         - containerPort: 9091
           name: web
@@ -51,3 +52,29 @@ spec:
           name: secret-prometheus-proxy
         - mountPath: /etc/proxy/htpasswd
           name: secret-prometheus-htpasswd
+{% if cluster_thanos_aggregation %}
+    - name: thanos-sidecar
+      args:
+        - 'sidecar'
+        - '--prometheus.url=http://localhost:9090'
+        - '--tsdb.path=/prometheus'
+        - '--cluster.peers=thanos-peers.{{ cluster_prometheus_namespace }}.svc:10900'
+        - '--objstore.config-file=/var/run/thanos-config/thanos.yml'
+      image: '{{ cluster_thanos_image }}:{{ cluster_thanos_image_version }}'
+      imagePullPolicy: IfNotPresent
+      ports:
+        - containerPort: 10902
+          name: http
+          protocol: TCP
+        - containerPort: 10901
+          name: grpc
+          protocol: TCP
+        - containerPort: 10900
+          name: cluster
+          protocol: TCP
+      volumeMounts:
+        - mountPath: /prometheus
+          name: prometheus-{{ cluster_prometheus_namespace_serviceAccount }}-db
+        - mountPath: /var/run/thanos-config
+          name: secret-thanos-bucket-config
+{% endif %}

@@ -28,7 +28,7 @@ RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     \
     \
     echo "===> Installing openshift module for ansible" && \
-    pip install openshift && \
+    pip install openshift jmespath && \
     \
     \
     echo "===> Installing handy tools (not absolutely required)..."  && \
@@ -43,12 +43,15 @@ RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     \
     echo "===> Adding hosts for convenience..."  && \
     mkdir -p /etc/ansible                        && \
-    echo 'localhost' > /etc/ansible/hosts
+    echo 'localhost' > /etc/ansible/hosts   && \
+    \
+    \
+    wget https://dl.minio.io/client/mc/release/linux-amd64/mc -O /root/mc && \
+    chmod +x /root/mc
+
 
 COPY . /etc/ansible/roles/prometheus-ocp
 
 COPY playbook.yml /tmp/ansible/
 
-
-# default command: display Ansible version
 CMD [ "ansible-playbook", "/tmp/ansible/playbook.yml" ]

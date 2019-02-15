@@ -1,5 +1,8 @@
 ---
 # defaults file for prometheus-ocp
+
+playbook_debug: no
+
 cluster_registry: registry.redhat.io # registry.access.redhat.com
 cluster_openshift_version: v3.11
 cluster_prometheus_namespace: app-prometheus
@@ -28,6 +31,22 @@ cluster_prometheus_oauth_proxy_memory_limit: 100Mi
 cluster_prometheus_oauth_proxy_cpu_limit: 100m
 
 cluster_prometheus_grafana_storage_type: none
+
+cluster_thanos_aggregation: yes
+
+cluster_thanos_minio_distributed: no
+
+cluster_thanos_store_bucket: data
+cluster_thanos_store_insecure: true
+cluster_thanos_store_access_key: foobar
+cluster_thanos_store_secret_key: foobar1234
+cluster_thanos_store_signature_version2: true
+cluster_thanos_store_minio_size: 20Gi
+
+cluster_thanos_image: improbable/thanos
+cluster_thanos_image_version: v0.2.1
+cluster_thanos_minio_image: minio/minio
+cluster_thanos_minio_image_version: latest
 
 # k8s client
 k8s_auth_verify_ssl: false
