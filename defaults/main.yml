@@ -1,5 +1,8 @@
 ---
 # defaults file for prometheus-ocp
+
+playbook_debug: yes
+
 cluster_registry: registry.redhat.io # registry.access.redhat.com
 cluster_openshift_version: v3.11
 cluster_prometheus_namespace: app-prometheus
@@ -31,7 +34,7 @@ cluster_prometheus_grafana_storage_type: none
 
 cluster_thanos_aggregation: yes
 
-cluster_thanos_store_bucket: minio
+cluster_thanos_store_bucket: data
 cluster_thanos_store_endpoint: minio-service.minio.svc
 cluster_thanos_store_insecure: true
 cluster_thanos_store_access_key: foobar

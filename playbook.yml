@@ -4,6 +4,7 @@
 
   vars:
     cluster_prometheus_namespace: monitoring-test
+
     cluster_prometheus_apiGroup: test.monitoring.com
     cluster_prometheus_namespace_serviceAccount: prometheus-test
     cluster_prometheus_grafana_serviceAccount: grafana-test

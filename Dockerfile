@@ -28,7 +28,7 @@ RUN echo "===> Installing sudo to emulate normal OS behavior..."  && \
     \
     \
     echo "===> Installing openshift module for ansible" && \
-    pip install openshift && \
+    pip install openshift jmespath && \
     \
     \
     echo "===> Installing handy tools (not absolutely required)..."  && \

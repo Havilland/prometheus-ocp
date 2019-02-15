@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: thanos-query
+  namespace: {{ cluster_prometheus_namespace }}
   labels:
     app: thanos-query
     thanos-peer: "true"

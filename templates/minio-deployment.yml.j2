@@ -13,8 +13,8 @@ spec:
         app: minio
     spec:
       containers:
-      -  name: minio
-         args:
+      - name: minio
+        args:
           - server
           - http://minio-{0...3}.minio.{{ cluster_prometheus_namespace }}.svc.cluster.local/data
         env:
@@ -33,7 +33,7 @@ spec:
       name: data
     spec:
       accessModes:
-        - ReadWriteMany
+        - ReadWriteOnce
       resources:
         requests:
           storage: {{ cluster_thanos_store_minio_size }}
