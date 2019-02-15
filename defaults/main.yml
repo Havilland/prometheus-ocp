@@ -1,7 +1,7 @@
 ---
 # defaults file for prometheus-ocp
 
-playbook_debug: yes
+playbook_debug: no
 
 cluster_registry: registry.redhat.io # registry.access.redhat.com
 cluster_openshift_version: v3.11
