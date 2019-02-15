@@ -64,7 +64,7 @@ spec:
 
       - name: grafana
         args:
-          - '-config=/etc/grafana/grafana.ini'name: grafana
+          - '-config=/etc/grafana/grafana.ini'
         image: "{{ cluster_registry }}/openshift3/grafana:{{ cluster_openshift_version }}"
         imagePullPolicy: IfNotPresent
         resources:
