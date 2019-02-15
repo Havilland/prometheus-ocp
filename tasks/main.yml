@@ -6,18 +6,13 @@
 - include_tasks: 01-install.yml
   when: prometheus_operator.resources | length == 0
 
-- include_tasks: 05-thanos.yml
+- include_tasks: 02-thanos.yml
   when: cluster_thanos_aggregation
 
-- include_tasks: 02-app-monitoring.yml
+- include_tasks: 03-app-monitoring.yml
   loop: "{{ namespaces_prom.resources|flatten(levels=1) }}"
   loop_control:
     loop_var: current_namespace
-
-#- include_tasks: 03-grafana.yml
-#  loop: "{{ namespaces_prom.resources|flatten(levels=1) }}"
-#  loop_control:
-#    loop_var: current_namespace
 
 - include_tasks: 04-cleanup-tasks.yml
   when: mktemp is defined and (mktemp.stdout | length > 0 )
