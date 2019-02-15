@@ -19,6 +19,7 @@ spec:
     - prometheus-proxy
     - prometheus-htpasswd
     - thanos-bucket-config
+  baseImage: {{ cluster_registry }}/openshift3/prometheus
   listenLocal: true
   containers:
     - name: prometheus-proxy
