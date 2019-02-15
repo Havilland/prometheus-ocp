@@ -18,6 +18,7 @@
             name: minio
         selector:
           app: minio
+  when: cluster_thanos_minio_distributed
 
 - name: "Deploy minio-service"
   k8s:

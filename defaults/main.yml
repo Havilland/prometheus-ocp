@@ -34,8 +34,9 @@ cluster_prometheus_grafana_storage_type: none
 
 cluster_thanos_aggregation: yes
 
+cluster_thanos_minio_distributed: no
+
 cluster_thanos_store_bucket: data
-cluster_thanos_store_endpoint: minio-service.minio.svc
 cluster_thanos_store_insecure: true
 cluster_thanos_store_access_key: foobar
 cluster_thanos_store_secret_key: foobar1234
