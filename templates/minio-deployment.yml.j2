@@ -61,25 +61,23 @@ kind: Deployment
 metadata:
   name: minio
   namespace: {{ cluster_prometheus_namespace }}
+  labels:
+    app: minio
 spec:
   strategy:
     type: Recreate
   template:
     metadata:
+      name: minio
       labels:
         app: minio
     spec:
-      # Refer to the PVC created earlier
-      volumes:
-      - name: storage
-        persistentVolumeClaim:
-          claimName: minio-pv-claim
       containers:
       - name: minio
-        image: {{ cluster_thanos_minio_image }}:{{ cluster_thanos_minio_image_version }}
         args:
-        - server
-        - /storage
+          - server
+          - /storage
+        image: {{ cluster_thanos_minio_image }}:{{ cluster_thanos_minio_image_version }}
         env:
         - name: MINIO_ACCESS_KEY
           value: "{{ cluster_thanos_store_access_key }}"
@@ -90,4 +88,8 @@ spec:
         volumeMounts:
         - name: storage
           mountPath: "/storage"
+      volumes:
+      - name: storage
+        persistentVolumeClaim:
+          claimName: minio-pv-claim
 {% endif %}
