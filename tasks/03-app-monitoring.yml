@@ -228,7 +228,6 @@
               service.alpha.openshift.io/serving-cert-secret-name: grafana-tls
             namespace: '{{ current_namespace.metadata.name }}'
             labels:
-    #            metrics-infra: grafana
               name: grafana
           spec:
             ports:
