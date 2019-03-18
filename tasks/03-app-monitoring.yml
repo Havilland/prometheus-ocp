@@ -212,7 +212,6 @@
               weight: 100
             wildcardPolicy: None
 
-
     - name: create service for grafana
       k8s:
         verify_ssl: "{{ k8s_auth_verify_ssl }}"
@@ -316,16 +315,16 @@
 
   when: prometheus_deployment.resources[0] is not defined
 
-  - name: "Pushgateway: template deployment"
-    template:
-      src: "pushgateway.yml.j2"
-      dest: "{{ mktemp.stdout }}/pushgateway.yml"
+- name: "Pushgateway: template deployment"
+  template:
+    src: "pushgateway.yml.j2"
+    dest: "{{ mktemp.stdout }}/pushgateway.yml"
 
-  - name: "Pushgateway: create pushgateway Deployment"
-    k8s:
-      verify_ssl: "{{ k8s_auth_verify_ssl }}"
-      state: present
-      src: "{{ mktemp.stdout }}/pushgateway.yml"
+- name: "Pushgateway: create pushgateway Deployment"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    src: "{{ mktemp.stdout }}/pushgateway.yml"
 
 - debug:
     msg: "Prometheus is already deployed in namespace"
