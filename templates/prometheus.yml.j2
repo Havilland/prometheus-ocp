@@ -20,6 +20,8 @@ spec:
     - prometheus-htpasswd
     - thanos-bucket-config
   listenLocal: true
+  version: v2.3.2
+  tag: {{ cluster_openshift_version }}
   containers:
     - name: prometheus-proxy
       args:
