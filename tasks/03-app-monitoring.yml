@@ -314,6 +314,17 @@
         state: present
         src: "{{ mktemp.stdout }}/grafana.yml"
 
+    - name: "Pushgateway: template deployment"
+      template:
+        src: "pushgateway.yml.j2"
+        dest: "{{ mktemp.stdout }}/pushgateway.yml"
+
+    - name: "Pushgateway: create pushgateway Deployment"
+      k8s:
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
+        state: present
+        src: "{{ mktemp.stdout }}/pushgateway.yml"
+
   when: prometheus_deployment.resources[0] is not defined
 
 - debug:
