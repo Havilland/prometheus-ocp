@@ -106,7 +106,6 @@
         name: "{{ cluster_prometheus_operator_serviceAccount }}"
         namespace: "{{ cluster_prometheus_namespace }}"
 
-
 - name: "Base Installation: deploy prometheus operator"
   k8s:
     verify_ssl: "{{ k8s_auth_verify_ssl }}"
