@@ -341,7 +341,7 @@
           - name: web
             port: 9091
             protocol: TCP
-            targetPort: web
+            targetPort: http
         selector:
           name: pushgateway
 

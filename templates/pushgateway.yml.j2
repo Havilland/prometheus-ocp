@@ -27,6 +27,8 @@ spec:
         name: pushgateway
         ports:
         - containerPort: 9091
+          name: http
+          protocol: TCP
         readinessProbe:
           httpGet:
             path: /
