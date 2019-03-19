@@ -8,6 +8,8 @@ If you want to deploy Thanos 4 persistent volumes have to be available for the S
 
 Additionally it can be run periodically to deploy prometheus instances and corresponding grafana instances into projects with a specified label
 
+There is also the option to deploy a pushgateway into a Project. Add the label `pushgateway=true` to the project and run the role, this will deploy the pushgateway and also the corresponding ServiceMonitor.
+
 ## Requirements
 
 ### General

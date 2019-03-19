@@ -22,7 +22,7 @@
       - k8s-app = {{ cluster_prometheus_namespace }}-operator
   register: prometheus_operator
 
-- name: Search for grafana wanted labels
+- name: Search for monitoring wanted labels
   k8s_facts:
     verify_ssl: "{{ k8s_auth_verify_ssl }}"
     api_version: v1
@@ -30,6 +30,25 @@
     label_selectors:
       -  "{{ cluster_prometheus_namespace_label }}" # search for namespaces with the specified label to deploy prometheus and grafana in there.
   register: namespaces_prom
+
+- name: Search for pushgateway labels
+  k8s_facts:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    api_version: v1
+    kind: namespace
+    label_selectors:
+      - "{{ cluster_prometheus_namespace_label }}" # search for namespaces with the specified label to deploy prometheus and grafana in there.
+      - "pushgateway=true"
+  register: namespaces_pushgateway
+
+- name: Check if Thanos is already deployed
+  k8s_facts:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    api_version: "v1"
+    kind: Deployment
+    name: thanos-query
+    namespace: '{{ cluster_prometheus_namespace }}'
+  register: thanos_deployment
 
 - name: Debugging vars
   block:

@@ -7,12 +7,17 @@
   when: prometheus_operator.resources | length == 0
 
 - include_tasks: 02-thanos.yml
-  when: cluster_thanos_aggregation
+  when: cluster_thanos_aggregation and thanos_deployment.resources[0] is not defined
 
 - include_tasks: 03-app-monitoring.yml
   loop: "{{ namespaces_prom.resources|flatten(levels=1) }}"
   loop_control:
     loop_var: current_namespace
 
-- include_tasks: 04-cleanup-tasks.yml
+- include_tasks: 04-pushgateway.yml
+  loop: "{{ namespaces_pushgateway.resources|flatten(levels=1) }}"
+  loop_control:
+    loop_var: current_namespace
+
+- include_tasks: 05-cleanup-tasks.yml
   when: mktemp is defined and (mktemp.stdout | length > 0 )

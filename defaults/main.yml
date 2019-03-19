@@ -17,6 +17,8 @@ cluster_prometheus_grafana_serviceAccount: custom-grafana
 cluster_prometheus_custom_label: "example-prometheus"
 cluster_prometheus_default_labelselector: "prometheus: monitoring"
 
+cluster_prometheus_pushgateway_image: prom/pushgateway
+
 cluster_prometheus_grafana_oauth_port: 3000
 cluster_prometheus_grafana_port: 3001
 

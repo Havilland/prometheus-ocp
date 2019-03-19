@@ -1,0 +1,45 @@
+---
+
+- name: Check if Pushgateway is already deployed
+  k8s_facts:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    api_version: "v1"
+    kind: Deployment
+    name: pushgateway
+    namespace: '{{ current_namespace.metadata.name }}'
+  register: pushgateway_deployment
+
+- name: Deploying pushgateway in namespace
+  block:
+    - name: "Pushgateway: template deployment"
+      template:
+        src: "pushgateway.yml.j2"
+        dest: "{{ mktemp.stdout }}/pushgateway.yml"
+
+    - name: "Pushgateway: create pushgateway Deployment"
+      k8s:
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
+        state: present
+        src: "{{ mktemp.stdout }}/pushgateway.yml"
+
+    - name: create service for pushgateway
+      k8s:
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: prometheus-pushgateway
+            namespace: '{{ current_namespace.metadata.name }}'
+            labels:
+              name: pushgateway
+          spec:
+            ports:
+              - name: http
+                port: 9091
+                protocol: TCP
+                targetPort: http
+            selector:
+              name: pushgateway
+  when: pushgateway_deployment.resources[0] is not defined
