@@ -54,4 +54,4 @@ COPY . /etc/ansible/roles/prometheus-ocp
 
 COPY playbook.yml /tmp/ansible/
 
-CMD [ "ansible-playbook", "/tmp/ansible/playbook.yml", "-vvv" ]
+CMD [ "ansible-playbook", "/tmp/ansible/playbook.yml" ]

@@ -189,4 +189,3 @@
     verify_ssl: "{{ k8s_auth_verify_ssl }}"
     state: present
     src: "{{ mktemp.stdout }}/thanos-query.yml"
-

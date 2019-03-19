@@ -312,40 +312,7 @@
         verify_ssl: "{{ k8s_auth_verify_ssl }}"
         state: present
         src: "{{ mktemp.stdout }}/grafana.yml"
-
   when: prometheus_deployment.resources[0] is not defined
-
-- name: "Pushgateway: template deployment"
-  template:
-    src: "pushgateway.yml.j2"
-    dest: "{{ mktemp.stdout }}/pushgateway.yml"
-
-- name: "Pushgateway: create pushgateway Deployment"
-  k8s:
-    verify_ssl: "{{ k8s_auth_verify_ssl }}"
-    state: present
-    src: "{{ mktemp.stdout }}/pushgateway.yml"
-
-- name: create service for pushgateway
-  k8s:
-    verify_ssl: "{{ k8s_auth_verify_ssl }}"
-    state: present
-    definition:
-      apiVersion: v1
-      kind: Service
-      metadata:
-        name: prometheus-pushgateway
-        namespace: '{{ current_namespace.metadata.name }}'
-        labels:
-          name: pushgateway
-      spec:
-        ports:
-          - name: web
-            port: 9091
-            protocol: TCP
-            targetPort: http
-        selector:
-          name: pushgateway
 
 - debug:
     msg: "Prometheus is already deployed in namespace"
