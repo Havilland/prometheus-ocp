@@ -336,6 +336,8 @@
       metadata:
         name: prometheus-pushgateway
         namespace: '{{ current_namespace.metadata.name }}'
+        labels:
+          name: pushgateway
       spec:
         ports:
           - name: web
