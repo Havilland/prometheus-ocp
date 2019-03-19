@@ -327,23 +327,23 @@
     src: "{{ mktemp.stdout }}/pushgateway.yml"
 
 - name: create service for pushgateway
-    k8s:
-      verify_ssl: "{{ k8s_auth_verify_ssl }}"
-      state: present
-      definition:
-        apiVersion: v1
-        kind: Service
-        metadata:
-          name: prometheus-pushgateway
-          namespace: '{{ current_namespace.metadata.name }}'
-        spec:
-          ports:
-            - name: web
-              port: 9091
-              protocol: TCP
-              targetPort: web
-          selector:
-            name: pushgateway
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: prometheus-pushgateway
+        namespace: '{{ current_namespace.metadata.name }}'
+      spec:
+        ports:
+          - name: web
+            port: 9091
+            protocol: TCP
+            targetPort: web
+        selector:
+          name: pushgateway
 
 - debug:
     msg: "Prometheus is already deployed in namespace"
