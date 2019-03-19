@@ -7,7 +7,8 @@ metadata:
 spec:
   replicas: 1
   selector:
-    name: pushgateway
+    matchLabels:
+      name: pushgateway
   strategy:
     type: Recreate
   template:
