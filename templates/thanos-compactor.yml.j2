@@ -1,0 +1,51 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: thanos-compactor
+  namespace: {{ cluster_prometheus_namespace }}
+  labels:
+    app: thanos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: thanos
+  serviceName: thanos-compactor
+  template:
+    metadata:
+      labels:
+        app: thanos
+    spec:
+      containers:
+        - name: thanos-compactor
+          image: {{ cluster_thanos_image }}:{{ cluster_thanos_image_version }}
+          args:
+            - compact
+            - --log.level=debug
+            - --data-dir=/data
+            - --objstore.config-file=/var/run/thanos-config/thanos.yml
+            - --sync-delay=30m
+            - --wait
+          ports:
+            - name: http
+              containerPort: 10902
+          volumeMounts:
+            - name: bucket-config
+              readOnly: true
+              mountPath: /var/run/thanos-config
+            - name: data
+              mountPath: /data
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+            requests:
+              cpu: "1"
+              memory: 1Gi
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: bucket-config
+          secret:
+            secretName: bucket-config
+            defaultMode: 420

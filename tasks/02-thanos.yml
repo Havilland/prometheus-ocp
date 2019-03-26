@@ -125,6 +125,7 @@
     - "minio-deployment.yml"
     - "thanos-query.yml"
     - "thanos-store.yml"
+    - "thanos-compactor.yml"
 
 - name: "Deploy minio"
   k8s:
@@ -183,6 +184,12 @@
     verify_ssl: "{{ k8s_auth_verify_ssl }}"
     state: present
     src: "{{ mktemp.stdout }}/thanos-store.yml"
+
+- name: "Deploy thanos-compactor statefulset"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    src: "{{ mktemp.stdout }}/thanos-compactor.yml"
 
 - name: "Deploy thanos-query"
   k8s:
