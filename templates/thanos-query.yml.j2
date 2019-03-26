@@ -6,6 +6,7 @@ metadata:
   namespace: {{ cluster_prometheus_namespace }}
   labels:
     app: thanos
+    component: thanos-query
     thanos-peer: "true"
 spec:
   replicas: 2
@@ -17,6 +18,7 @@ spec:
     metadata:
       labels:
         app: thanos
+        component: thanos-query
         thanos-peer: "true"
       annotations:
         prometheus.io/scrape: "true"

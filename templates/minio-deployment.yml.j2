@@ -5,13 +5,15 @@ kind: StatefulSet
 metadata:
   name: minio
   namespace: {{ cluster_prometheus_namespace }}
+  labels:
+    app: thanos
 spec:
   serviceName: minio
   replicas: 4
   template:
     metadata:
       labels:
-        app: minio
+        app: thanos
     spec:
       containers:
       - name: minio
@@ -62,7 +64,8 @@ metadata:
   name: minio
   namespace: {{ cluster_prometheus_namespace }}
   labels:
-    app: minio
+    app: thanos
+    component: minio
 spec:
   strategy:
     type: Recreate
@@ -70,7 +73,8 @@ spec:
     metadata:
       name: minio
       labels:
-        app: minio
+        app: thanos
+        component: minio
     spec:
       containers:
       - name: minio
