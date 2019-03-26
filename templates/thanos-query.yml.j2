@@ -5,18 +5,20 @@ metadata:
   name: thanos-query
   namespace: {{ cluster_prometheus_namespace }}
   labels:
-    app: thanos-query
+    app: thanos
+    component: thanos-query
     thanos-peer: "true"
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: thanos-query
+      app: thanos
       thanos-peer: "true"
   template:
     metadata:
       labels:
-        app: thanos-query
+        app: thanos
+        component: thanos-query
         thanos-peer: "true"
       annotations:
         prometheus.io/scrape: "true"

@@ -4,6 +4,8 @@ kind: StatefulSet
 metadata:
   name: thanos-store
   namespace: {{ cluster_prometheus_namespace }}
+  labels:
+    app: thanos
 spec:
   serviceName: "thanos-store"
   replicas: 1

@@ -37,7 +37,7 @@
             targetPort: 9000
             protocol: TCP
         selector:
-          app: minio
+          component: minio
 
 - name: "Create thanos-peers headless service"
   k8s:
@@ -70,7 +70,7 @@
         name: thanos-query
         namespace: '{{ cluster_prometheus_namespace }}'
         labels:
-          app: thanos-query
+          component: thanos-query
       spec:
         type: NodePort
         externalTrafficPolicy: Cluster
@@ -80,7 +80,7 @@
             protocol: TCP
             targetPort: http
         selector:
-          app: thanos-query
+          component: thanos-query
 
 - name: "Create route to thanos-query"
   k8s:
@@ -125,6 +125,7 @@
     - "minio-deployment.yml"
     - "thanos-query.yml"
     - "thanos-store.yml"
+    - "thanos-compactor.yml"
 
 - name: "Deploy minio"
   k8s:
@@ -183,6 +184,12 @@
     verify_ssl: "{{ k8s_auth_verify_ssl }}"
     state: present
     src: "{{ mktemp.stdout }}/thanos-store.yml"
+
+- name: "Deploy thanos-compactor statefulset"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    src: "{{ mktemp.stdout }}/thanos-compactor.yml"
 
 - name: "Deploy thanos-query"
   k8s:
