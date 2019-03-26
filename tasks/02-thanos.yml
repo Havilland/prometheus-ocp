@@ -196,3 +196,164 @@
     verify_ssl: "{{ k8s_auth_verify_ssl }}"
     state: present
     src: "{{ mktemp.stdout }}/thanos-query.yml"
+
+- name: "Grafana Deployment: create grafana service account"
+    k8s:
+      verify_ssl: "{{ k8s_auth_verify_ssl }}"
+      state: present
+      api_version: v1
+      name: '{{ cluster_prometheus_grafana_serviceAccount }}'
+      kind: ServiceAccount
+      namespace: '{{ cluster_prometheus_namespace }}'
+      definition:
+        metadata:
+          annotations:
+            serviceaccounts.openshift.io/oauth-redirectreference.primary: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"grafana"}}'
+
+- name: "Grafana Deployment: set clusterrolebinding for grafana service account"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1beta1
+      kind: ClusterRoleBinding
+      metadata:
+        name: '{{ cluster_prometheus_grafana_serviceAccount }}-{{ cluster_prometheus_namespace }}'
+        labels:
+          app-monitor: '{{ cluster_prometheus_custom_label }}'
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: grafana
+      subjects:
+        - kind: ServiceAccount
+          name: '{{ cluster_prometheus_grafana_serviceAccount }}'
+          namespace: '{{ cluster_prometheus_namespace }}'
+
+- name: Create route for grafana
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    definition:
+      apiVersion: route.openshift.io/v1
+      kind: Route
+      metadata:
+        name: grafana
+        namespace: '{{ cluster_prometheus_namespace }}'
+      spec:
+        port:
+          targetPort: https
+        tls:
+          termination: reencrypt
+        to:
+          kind: Service
+          name: grafana
+          weight: 100
+        wildcardPolicy: None
+
+- name: create service for grafana
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: grafana
+        annotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/scheme: https
+          service.alpha.openshift.io/serving-cert-secret-name: grafana-tls
+        namespace: '{{ cluster_prometheus_namespace }}'
+        labels:
+          name: grafana
+      spec:
+        ports:
+          - name: https
+            port: '{{ cluster_prometheus_grafana_port }}'
+            protocol: TCP
+            targetPort: https
+        selector:
+          app: grafana
+
+- name: Create grafana session_secret
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: grafana-proxy
+        namespace: '{{ cluster_prometheus_namespace }}'
+      stringData:
+        session_secret: "{{ lookup('password', '/tmp/session_secret length=43 chars=ascii_letters,digits') }}"
+
+
+- name: "Grafana Deployment: create grafana pvc"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: "{{ cluster_prometheus_grafana_serviceAccount }}-pvc"
+        labels:
+          app: '{{ cluster_prometheus_grafana_serviceAccount }}'
+          app-monitor: '{{ cluster_prometheus_custom_label }}'
+        namespace: '{{ cluster_prometheus_namespace }}'
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+  when: cluster_prometheus_grafana_storage_type == 'pvc'
+
+- name: Reassign Namespace Variable for templating
+  set_fact:
+    current_namespace:
+      metadata:
+        name: {{ cluster_prometheus_namespace }}
+
+- name: "Grafana Deployment: template deployment and grafana-config"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ mktemp.stdout }}/{{ item }}"
+  loop:
+    - "grafana.yml"
+    - "grafana-config.yml"
+    - "grafana-thanos-datasource.yml"
+
+- name: create grafana-config configmap
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        namespace: '{{ cluster_prometheus_namespace }}'
+        name: grafana-config
+      data:
+        grafana.ini: "{{ lookup('file', '{{ mktemp.stdout }}/grafana-config.yml') }}"
+
+- name: Create grafana datasource secret
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: grafana-datasources
+        namespace: '{{ cluster_prometheus_namespace }}'
+      stringData:
+        prometheus.yaml: "{{ lookup('file', '{{ mktemp.stdout }}/grafana-thanos-datasource.yml') }}"
+
+- name: "Grafana Deployment: create grafana deployment"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    src: "{{ mktemp.stdout }}/grafana.yml"
