@@ -198,17 +198,17 @@
     src: "{{ mktemp.stdout }}/thanos-query.yml"
 
 - name: "Grafana Deployment: create grafana service account"
-    k8s:
-      verify_ssl: "{{ k8s_auth_verify_ssl }}"
-      state: present
-      api_version: v1
-      name: '{{ cluster_prometheus_grafana_serviceAccount }}'
-      kind: ServiceAccount
-      namespace: '{{ cluster_prometheus_namespace }}'
-      definition:
-        metadata:
-          annotations:
-            serviceaccounts.openshift.io/oauth-redirectreference.primary: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"grafana"}}'
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    api_version: v1
+    name: '{{ cluster_prometheus_grafana_serviceAccount }}'
+    kind: ServiceAccount
+    namespace: '{{ cluster_prometheus_namespace }}'
+    definition:
+      metadata:
+        annotations:
+          serviceaccounts.openshift.io/oauth-redirectreference.primary: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"grafana"}}'
 
 - name: "Grafana Deployment: set clusterrolebinding for grafana service account"
   k8s:
@@ -315,7 +315,7 @@
   set_fact:
     current_namespace:
       metadata:
-        name: {{ cluster_prometheus_namespace }}
+        name: '{{ cluster_prometheus_namespace }}'
 
 - name: "Grafana Deployment: template deployment and grafana-config"
   template:
@@ -348,7 +348,7 @@
       kind: Secret
       metadata:
         name: grafana-datasources
-        namespace: '{{ cluster_prometheus_namespace }}'
+        namespace: '{{ current_namespace.metadata.name }}'
       stringData:
         prometheus.yaml: "{{ lookup('file', '{{ mktemp.stdout }}/grafana-thanos-datasource.yml') }}"
 
