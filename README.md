@@ -76,7 +76,7 @@ For defaults see [`defaults/main.yaml`](defaults/main.yaml)
 * `cluster_thanos_store_secret_key: foobar123`: Secret key to access object storage
 * `cluster_thanos_store_minio_size: 20Gi`: Size of the persistent volumes to be used to back the object storage
 * `cluster_thanos_image: improbable/thanos`
-* `cluster_thanos_image_version: v0.2.1`
+* `cluster_thanos_image_version: v0.3.2`
 * `cluster_thanos_minio_image: minio/minio`
 * `cluster_thanos_minio_image_version: latest`
 
