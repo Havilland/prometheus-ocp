@@ -49,3 +49,7 @@ spec:
           secret:
             secretName: bucket-config
             defaultMode: 420
+{% if cluster_prometheus_nodeselector is not none %}
+      nodeSelector:
+        {{ cluster_prometheus_nodeselector }}
+{% endif %}

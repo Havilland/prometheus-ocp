@@ -43,3 +43,7 @@ spec:
           httpGet:
             path: /-/healthy
             port: http
+{% if cluster_prometheus_nodeselector is not none %}
+      nodeSelector:
+        {{ cluster_prometheus_nodeselector }}
+{% endif %}
