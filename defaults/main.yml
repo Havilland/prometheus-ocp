@@ -38,6 +38,7 @@ cluster_thanos_aggregation: yes
 
 cluster_thanos_minio_distributed: no
 
+cluster_thanos_store_traffic: external # Options: internal or external . If set to external thanos will use external route to write data to minio
 cluster_thanos_store_bucket: data
 cluster_thanos_store_insecure: true
 cluster_thanos_store_access_key: foobar
@@ -49,6 +50,12 @@ cluster_thanos_image: improbable/thanos
 cluster_thanos_image_version: v0.3.2
 cluster_thanos_minio_image: minio/minio
 cluster_thanos_minio_image_version: latest
+
+cluster_routes_use_https: yes
+
+cluster_prometheus_nodeselector: ""
+# is used for thanos & Minio deployment
+cluster_thanos_nodeselector: "region=example"
 
 # k8s client
 k8s_auth_verify_ssl: false
