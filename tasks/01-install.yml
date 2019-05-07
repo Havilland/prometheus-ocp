@@ -106,56 +106,18 @@
         name: "{{ cluster_prometheus_operator_serviceAccount }}"
         namespace: "{{ cluster_prometheus_namespace }}"
 
-- name: "Base Installation: deploy prometheus operator"
+- name: "Create prometheus-operator.yml from template"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ mktemp.stdout }}/{{ item }}"
+  loop:
+    - "prometheus-operator.yml"
+
+- name: "Deploy prometheus-operator"
   k8s:
     verify_ssl: "{{ k8s_auth_verify_ssl }}"
     state: present
-    namespace: "{{ cluster_prometheus_namespace }}"
-    definition:
-      apiVersion: apps/v1
-      kind: Deployment
-      metadata:
-        name: '{{ cluster_prometheus_namespace }}-operator'
-        namespace: "{{ cluster_prometheus_namespace }}"
-        labels:
-          k8s-app: '{{ cluster_prometheus_namespace }}-operator'
-      spec:
-        replicas: "{{ cluster_prometheus_operator_size }}"
-        selector:
-          matchLabels:
-            k8s-app: '{{ cluster_prometheus_namespace }}-operator'
-        template:
-          metadata:
-            labels:
-              k8s-app: '{{ cluster_prometheus_namespace }}-operator'
-          spec:
-            containers:
-            - name: '{{ cluster_prometheus_namespace }}-operator'
-              args:
-              - '--kubelet-service=kube-system/kubelet'
-              - '--logtostderr=true'
-              - '--config-reloader-image={{ cluster_registry }}/openshift3/ose-configmap-reloader:{{ cluster_openshift_version }}'
-              - '--prometheus-config-reloader={{ cluster_registry }}/openshift3/ose-prometheus-config-reloader:{{ cluster_openshift_version }}'
-              - '--prometheus-default-base-image={{ cluster_registry }}/openshift3/prometheus'
-              - '--crd-apigroup={{ cluster_prometheus_apiGroup }}'
-              - '--disable-auto-user-group'
-              image: '{{ cluster_registry }}/openshift3/ose-prometheus-operator:{{ cluster_openshift_version }}'
-              ports:
-              - containerPort: 8080
-                name: http
-              resources:
-                limits:
-                  cpu: 200m
-                  memory: 200Mi
-                requests:
-                  cpu: 100m
-                  memory: 100Mi
-              securityContext:
-                allowPrivilegeEscalation: false
-                readOnlyRootFilesystem: true
-            securityContext:
-              runAsNonRoot: true
-            serviceAccountName: "{{ cluster_prometheus_operator_serviceAccount }}"
+    src: "{{ mktemp.stdout }}/prometheus-operator.yml"
 
 - name: "Base Installation: Create app-prometheus clusterrole"
   k8s:
