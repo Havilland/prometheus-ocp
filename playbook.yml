@@ -9,6 +9,8 @@
     cluster_prometheus_namespace_serviceAccount: prometheus-test
     cluster_prometheus_grafana_serviceAccount: grafana-test
     cluster_prometheus_namespace_label: "monitoring=true"
+    cluster_prometheus_nodeselector: "node-role.kubernetes.io/compute: 'true'"
+
 
   roles:
     - prometheus-ocp

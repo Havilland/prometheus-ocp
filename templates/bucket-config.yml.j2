@@ -1,8 +1,15 @@
 type: S3
 config:
   bucket: {{ cluster_thanos_store_bucket }}
-  endpoint: minio-service.{{ cluster_prometheus_namespace }}.svc:9000
+{% if cluster_thanos_store_traffic == 'internal' %}
   insecure: {{ cluster_thanos_store_insecure }}
+  endpoint: minio-service.{{ cluster_prometheus_namespace }}.svc:9000
+{% else %}
+  insecure: false
+  endpoint: {{ minio_route | json_query('resources[*].spec.host') | join('') }}
+  http_config:
+    insecure_skip_verify: true
+{% endif %}
   signature_version2: {{ cluster_thanos_store_signature_version2 }}
   access_key: {{ cluster_thanos_store_access_key }}
   secret_key: {{ cluster_thanos_store_secret_key }}
