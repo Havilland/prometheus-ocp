@@ -54,6 +54,9 @@ cluster_thanos_minio_image_version: latest
 cluster_routes_use_https: yes
 
 cluster_prometheus_nodeselector: ""
+cluster_default_route_label:
+
+
 
 
 # k8s client

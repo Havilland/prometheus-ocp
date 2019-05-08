@@ -82,43 +82,10 @@
         selector:
           component: thanos-query
 
-- name: "Create route to thanos-query"
-  k8s:
-    verify_ssl: "{{ k8s_auth_verify_ssl }}"
-    state: present
-    definition:
-      apiVersion: v1
-      kind: Route
-      metadata:
-        name: thanos-query
-        namespace: '{{ cluster_prometheus_namespace }}'
-        labels:
-          route: thanos-query
-      spec:
-        to:
-          kind: Service
-          name: thanos-query
-        tls:
-          termination: edge
-
-- name: "Create route to minio-service"
-  k8s:
-    verify_ssl: "{{ k8s_auth_verify_ssl }}"
-    state: present
-    definition:
-      apiVersion: v1
-      kind: Route
-      metadata:
-        name: minio-service
-        namespace: '{{ cluster_prometheus_namespace }}'
-        labels:
-          route: minio-service
-      spec:
-        to:
-          kind: Service
-          name: minio-service
-        tls:
-          termination: edge
+- include_tasks: 02-1-routes.yml
+  loop:
+    - "thanos-query"
+    - "minio-service"
 
 - name: "Create yml files from templates"
   template:
