@@ -1,0 +1,18 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ item }}
+  namespace: {{ cluster_prometheus_namespace }}
+  labels:
+    route: {{ item }}
+{% if cluster_default_route_label is not none %}
+    {{ cluster_default_route_label }}
+{% endif %}
+spec:
+  to:
+    kind: Service
+    name: {{ item }}
+{% if cluster_routes_use_https %}
+  tls:
+    termination: edge
+{% endif %}
