@@ -98,8 +98,6 @@
         to:
           kind: Service
           name: thanos-query
-        tls:
-          termination: edge
 
 - name: "Create route to minio-service"
   k8s:
@@ -117,14 +115,13 @@
         to:
           kind: Service
           name: minio-service
-        tls:
-          termination: edge
 
 - name: "Create yml files from templates"
   template:
     src: "{{ item }}.j2"
     dest: "{{ mktemp.stdout }}/{{ item }}"
   loop:
+    - "bucket-config.yml"
     - "minio-deployment.yml"
     - "thanos-query.yml"
     - "thanos-store.yml"
@@ -142,11 +139,6 @@
     seconds: 120
   when: minio_deploy.changed and cluster_thanos_minio_distributed
 
-- name: "Wait 60 seconds for minio deployment"
-  pause:
-    seconds: 60
-  when: minio_deploy.changed
-
 - name: "Get minio route"
   k8s_facts:
     verify_ssl: "{{ k8s_auth_verify_ssl }}"
@@ -158,7 +150,7 @@
   register: minio_route
 
 - name: "Configure minio client"
-  command: /root/mc config host add minio https://{{ minio_route | json_query('resources[*].spec.host') | join('') }} {{ cluster_thanos_store_access_key }} {{ cluster_thanos_store_secret_key }} --insecure
+  command: /root/mc config host add minio http://{{ minio_route | json_query('resources[*].spec.host') | join('') }} {{ cluster_thanos_store_access_key }} {{ cluster_thanos_store_secret_key }}
   register: task_result
   until: task_result.rc == 0
   retries: 10
@@ -166,20 +158,13 @@
   ignore_errors: yes
 
 - name: "Check if bucket exists"
-  command: /root/mc ls minio/{{ cluster_thanos_store_bucket }} --insecure
+  command: /root/mc ls minio/{{ cluster_thanos_store_bucket }}
   ignore_errors: yes
   register: bucket_result
 
 - name: "Create bucket"
-  command: /root/mc mb minio/{{ cluster_thanos_store_bucket }} --insecure
+  command: /root/mc mb minio/{{ cluster_thanos_store_bucket }}
   when: bucket_result.rc != 0
-
-- name: "Create bucket-config.yml from template"
-  template:
-    src: "{{ item }}.j2"
-    dest: "{{ mktemp.stdout }}/{{ item }}"
-  loop:
-    - "bucket-config.yml"
 
 - name: "Create bucket-config secret"
   k8s:

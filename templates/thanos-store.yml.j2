@@ -50,7 +50,3 @@ spec:
       - name: bucket-config
         secret:
           secretName: bucket-config
-{% if cluster_prometheus_nodeselector is not none %}
-      nodeSelector:
-        {{ cluster_prometheus_nodeselector }}
-{% endif %}
