@@ -96,4 +96,8 @@ spec:
       - name: storage
         persistentVolumeClaim:
           claimName: minio-pv-claim
+    {% if cluster_prometheus_nodeselector is not none %}
+      nodeSelector:
+        {{ cluster_prometheus_nodeselector }}
+    {% endif %}
 {% endif %}
