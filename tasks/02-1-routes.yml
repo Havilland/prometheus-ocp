@@ -1,0 +1,11 @@
+---
+- name: "Create route.yml files from templates"
+  template:
+    src: "route.j2"
+    dest: "{{ mktemp.stdout }}/{{ item }}-route.yml"
+
+- name: "Create routes"
+  k8s:
+    verify_ssl: "{{ k8s_auth_verify_ssl }}"
+    state: present
+    src: "{{ mktemp.stdout }}/{{ item }}-route.yml"
