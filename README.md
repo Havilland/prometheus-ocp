@@ -14,7 +14,7 @@ There is also the option to deploy a pushgateway into a Project. Add the label `
 
 ### General
 
-* OpenShift 3.10 or greater
+* OpenShift 3.11 or greater
 * Ansible 2.7.x
 * Python
 * Pip
