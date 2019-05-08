@@ -139,10 +139,12 @@
         name: bucket-config
         namespace: '{{ cluster_prometheus_namespace }}'
       register: bucket_config_secret
+      when: cluster_thanos_aggregation
 
     - name: extract bucket-config
       set_fact:
         bucket_config: "{{ bucket_config_secret.resources[0].data['thanos.yml'] | b64decode }}"
+      when: cluster_thanos_aggregation
 
     - name: "Create bucket-config secret"
       k8s:
@@ -156,6 +158,7 @@
             namespace: '{{ current_namespace.metadata.name }}'
           stringData:
             thanos.yml: "{{ bucket_config }}"
+      when: cluster_thanos_aggregation
 
     - name: "Prometheus Deployment: template deployment"
       template:
