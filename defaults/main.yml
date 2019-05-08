@@ -47,7 +47,7 @@ cluster_thanos_store_signature_version2: true
 cluster_thanos_store_minio_size: 20Gi
 
 cluster_thanos_image: improbable/thanos
-cluster_thanos_image_version: v0.4.0
+cluster_thanos_image_version: v0.3.2
 cluster_thanos_minio_image: minio/minio
 cluster_thanos_minio_image_version: latest
 

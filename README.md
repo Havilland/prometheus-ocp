@@ -10,6 +10,10 @@ Additionally it can be run periodically to deploy prometheus instances and corre
 
 There is also the option to deploy a pushgateway into a Project. Add the label `pushgateway=true` to the project and run the role, this will deploy the pushgateway and also the corresponding ServiceMonitor.
 
+## Disclaimer
+
+This role currently works only with thanos v0.3.2 due to changes in the tsdb of prometheus in the version after v0.3.2. 
+
 ## Requirements
 
 ### General
@@ -68,7 +72,7 @@ For defaults see [`defaults/main.yaml`](defaults/main.yaml)
 * `cluster_thanos_store_secret_key: foobar123`: Secret key to access object storage
 * `cluster_thanos_store_minio_size: 20Gi`: Size of the persistent volumes to be used to back the object storage
 * `cluster_thanos_image: improbable/thanos`: Source of the thanos image
-* `cluster_thanos_image_version: v0.4.0`: Version of thanos to deploy
+* `cluster_thanos_image_version: v0.3.2`: Version of thanos to deploy
 * `cluster_thanos_minio_image: minio/minio`: Source of the minio image
 * `cluster_thanos_minio_image_version: latest`: Version of minio to deploy
 * `cluster_prometheus_nodeselector: ""`: Set nodeSelector for prometheus-operator, thanos components and minio
