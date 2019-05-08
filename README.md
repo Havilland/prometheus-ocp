@@ -75,7 +75,7 @@ For defaults see [`defaults/main.yaml`](defaults/main.yaml)
 * `cluster_thanos_image_version: v0.3.2`: Version of thanos to deploy
 * `cluster_thanos_minio_image: minio/minio`: Source of the minio image
 * `cluster_thanos_minio_image_version: latest`: Version of minio to deploy
-* `cluster_prometheus_nodeselector: ""`: Set nodeSelector for prometheus-operator, thanos components and minio
+* `cluster_prometheus_nodeselector: `: Set nodeSelector for prometheus-operator, thanos components and minio
 * `cluster_thanos_store_traffic: external | internal`: Set to internal when communication should not leave cluster. Otherwise thanos will use external minio route for data (https included)
 * `cluster_default_route_label: "label: example"`: Set an additional label for thanos-query and minio route
 ## Usage
