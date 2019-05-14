@@ -82,6 +82,7 @@ spec:
           - server
           - /storage
         image: {{ cluster_thanos_minio_image }}:{{ cluster_thanos_minio_image_version }}
+        imagePullPolicy: {{ cluster_default_image_pull_policy }}
         env:
         - name: MINIO_ACCESS_KEY
           value: "{{ cluster_thanos_store_access_key }}"

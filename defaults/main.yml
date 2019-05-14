@@ -55,6 +55,7 @@ cluster_routes_use_https: yes
 
 cluster_prometheus_nodeselector:
 cluster_default_route_label:
+cluster_default_image_pull_policy: "Always"
 
 
 

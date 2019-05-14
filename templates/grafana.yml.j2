@@ -66,7 +66,7 @@ spec:
         args:
           - '-config=/etc/grafana/grafana.ini'
         image: "{{ cluster_registry }}/openshift3/grafana:{{ cluster_openshift_version }}"
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: {{ cluster_default_image_pull_policy }}
         resources:
           requests:
 {% if cluster_prometheus_grafana_memory_requests is defined and cluster_prometheus_grafana_memory_requests is not none %}

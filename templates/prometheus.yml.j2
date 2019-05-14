@@ -64,7 +64,7 @@ spec:
         - '--cluster.peers=thanos-peers.{{ cluster_prometheus_namespace }}.svc:10900'
         - '--objstore.config-file=/var/run/thanos-config/thanos.yml'
       image: '{{ cluster_thanos_image }}:{{ cluster_thanos_image_version }}'
-      imagePullPolicy: IfNotPresent
+      imagePullPolicy: {{ cluster_default_image_pull_policy }}
       ports:
         - containerPort: 10902
           name: http

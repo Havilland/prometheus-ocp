@@ -25,6 +25,7 @@ spec:
       containers:
       - name: thanos-store
         image: {{ cluster_thanos_image }}:{{ cluster_thanos_image_version }}
+        imagePullPolicy: {{ cluster_default_image_pull_policy }}
         args:
         - 'store'
         - '--log.level=debug'

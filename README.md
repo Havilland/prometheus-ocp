@@ -52,6 +52,7 @@ ansible-playbook -i hosts.inv site-install.yml -e 'ansible_python_interpreter=py
 For defaults see [`defaults/main.yaml`](defaults/main.yaml)
 
 * `cluster_registry`: Image source
+* `cluster_default_image_pull_policy: Always`: Sets ImagePullPolicy for Pods.
 * `cluster_openshift_version`: The version of OpenShift we're deploying onto. Ensures we pull the right image versions
 * `cluster_prometheus_namespace`: Namespace where to deploy prometheus operator
 * `cluster_prometheus_apiGroup`: apiGroup for the prometheus-operator (don't use monitoring.coreos.com if cluster-monitoring-operator is present)
