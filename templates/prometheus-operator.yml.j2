@@ -27,6 +27,7 @@ spec:
         - '--crd-apigroup={{ cluster_prometheus_apiGroup }}'
         - '--disable-auto-user-group'
         image: '{{ cluster_registry }}/openshift3/ose-prometheus-operator:{{ cluster_openshift_version }}'
+        imagePullPolicy: {{ cluster_default_image_pull_policy }}
         ports:
         - containerPort: 8080
           name: http
