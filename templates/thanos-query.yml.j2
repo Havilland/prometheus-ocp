@@ -27,6 +27,7 @@ spec:
       containers:
       - name: thanos-query
         image: {{ cluster_thanos_image }}:{{ cluster_thanos_image_version }}
+        imagePullPolicy: {{ cluster_default_image_pull_policy }}
         args:
         - 'query'
         - '--log.level=debug'
