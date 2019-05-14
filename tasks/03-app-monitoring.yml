@@ -66,33 +66,29 @@
               app-monitor: monitor
           spec:
             ports:
-              - name: web
+              - name: https
                 port: 9091
                 protocol: TCP
-                targetPort: web
+                targetPort: https
             selector:
               prometheus: '{{ cluster_prometheus_namespace_serviceAccount }}'
 
-    - name: Create route for prometheus
+    - name: "Create route.yml files from templates"
+      template:
+        src: "route-reencrypt.j2"
+        dest: "{{ mktemp.stdout }}/{{ item }}-route.yml"
+      loop:
+        - "prometheus"
+        - "grafana"
+
+    - name: "Create routes"
       k8s:
         verify_ssl: "{{ k8s_auth_verify_ssl }}"
         state: present
-        definition:
-          apiVersion: route.openshift.io/v1
-          kind: Route
-          metadata:
-            name: prometheus
-            namespace: '{{ current_namespace.metadata.name }}'
-          spec:
-            port:
-              targetPort: web
-            tls:
-              termination: reencrypt
-            to:
-              kind: Service
-              name: prometheus
-              weight: 100
-            wildcardPolicy: None
+        src: "{{ mktemp.stdout }}/{{ item }}-route.yml"
+      loop:
+        - "prometheus"
+        - "grafana"
 
     - name: Generate session_secret
       set_fact:
@@ -205,27 +201,6 @@
             - kind: ServiceAccount
               name: '{{ cluster_prometheus_grafana_serviceAccount }}'
               namespace: '{{ current_namespace.metadata.name }}'
-
-    - name: Create route for grafana
-      k8s:
-        verify_ssl: "{{ k8s_auth_verify_ssl }}"
-        state: present
-        definition:
-          apiVersion: route.openshift.io/v1
-          kind: Route
-          metadata:
-            name: grafana
-            namespace: '{{ current_namespace.metadata.name }}'
-          spec:
-            port:
-              targetPort: https
-            tls:
-              termination: reencrypt
-            to:
-              kind: Service
-              name: grafana
-              weight: 100
-            wildcardPolicy: None
 
     - name: create service for grafana
       k8s:
