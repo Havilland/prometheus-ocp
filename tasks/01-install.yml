@@ -181,3 +181,19 @@
             - subjectaccessreviews
           verbs:
             - create
+
+- name: "Create Networkpolicy if necessary"
+  block:
+
+    - name: generate networkpolicy yaml from template
+      template:
+        src: thanos-networkpolicy.yml.j2
+        dest: "{{ mktemp.stdout }}/thanos-networkpolicy.yml"
+
+    - name: create clusternetwork policy
+      k8s:
+        verify_ssl: "{{ k8s_auth_verify_ssl }}"
+        state: present
+        src: "{{ mktemp.stdout }}/thanos-networkpolicy.yml"
+
+  when: sdn_plugin_name == "redhat/openshift-ovs-networkpolicy" and cluster_thanos_aggregation

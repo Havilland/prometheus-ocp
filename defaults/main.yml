@@ -38,7 +38,6 @@ cluster_thanos_aggregation: yes
 
 cluster_thanos_minio_distributed: no
 
-cluster_thanos_store_traffic: external # Options: internal or external . If set to external thanos will use external route to write data to minio
 cluster_thanos_store_bucket: data
 cluster_thanos_store_insecure: true
 cluster_thanos_store_access_key: foobar

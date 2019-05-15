@@ -1,0 +1,36 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-10900-thanos-peers
+  namespace: {{ cluster_prometheus_namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      thanos-peer: 'true'
+  ingress:
+    - ports:
+        - protocol: TCP
+          port: 10900
+      from:
+        - namespaceSelector:
+            matchLabels:
+              {{ cluster_prometheus_namespace_label | regex_replace('^(?P<key>.+)=(?P<value>.+)$', "\\g<key>: '\\g<value>'") }}
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-9000-minio
+  namespace: {{ cluster_prometheus_namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      thanos-peer: 'true'
+  ingress:
+    - ports:
+        - protocol: TCP
+          port: 9000
+      from:
+        - namespaceSelector:
+            matchLabels:
+              {{ cluster_prometheus_namespace_label | regex_replace('^(?P<key>.+)=(?P<value>.+)$', "\\g<key>: '\\g<value>'") }}
