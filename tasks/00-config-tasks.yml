@@ -12,6 +12,19 @@
       - passlib
       - jmespath
 
+- name: Get node-config to check SDN-Plugin type
+  k8s_facts:
+    verify_ssl: false
+    api_version: v1
+    kind: ConfigMap
+    namespace: openshift-node
+    name: node-config-master
+  register: node_configmap
+
+- name: Extract networkPluginName from node-config.yml
+  set_fact:
+    sdn_plugin_name: "{{ node_configmap.resources[0].data['node-config.yaml'] | from_yaml | json_query('networkConfig.networkPluginName') }}"
+
 - name: Check if cluster_prometheus is deployed
   k8s_facts:
     verify_ssl: "{{ k8s_auth_verify_ssl }}"

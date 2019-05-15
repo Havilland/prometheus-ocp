@@ -1,7 +1,7 @@
 type: S3
 config:
   bucket: {{ cluster_thanos_store_bucket }}
-{% if cluster_thanos_store_traffic == 'internal' %}
+{% if sdn_plugin_name == "redhat/openshift-ovs-networkpolicy" %}
   insecure: {{ cluster_thanos_store_insecure }}
   endpoint: minio-service.{{ cluster_prometheus_namespace }}.svc:9000
 {% else %}
