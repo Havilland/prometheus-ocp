@@ -3,6 +3,8 @@
 
 playbook_debug: no
 
+role_version: '0.3.0'
+
 cluster_registry: registry.redhat.io # registry.access.redhat.com
 cluster_openshift_version: v3.11
 cluster_prometheus_namespace: app-prometheus
